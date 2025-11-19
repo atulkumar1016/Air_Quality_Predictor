@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AQI Shield - India's Most Advanced Air Quality Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a1a;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+        #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 1; }
+
+        /* Ticker */
+        .ticker {
+            position: fixed; top: 0; width: 100%; background: rgba(0,0,0,0.75);
+            padding: 14px 0; font-size: 1rem; font-weight: 600; text-align: center;
+            z-index: 999; backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,245,255,0.3); animation: blink 4s infinite;
+        }
+        @keyframes blink { 0%,100%{opacity:0.95} 50%{opacity:1; box-shadow:0 0 20px rgba(0,245,255,0.4)} }
+        .ticker span { letter-spacing: 1.2px; }
+        .dot-red::before    { content: " ● "; color: #ff4757; }
+        .dot-orange::before { content: " ● "; color: #ffa502; }
+        .dot-yellow::before { content: " ● "; color: #ffdd00; }
+        .dot-green::before  { content: " ● "; color: #2ed573; }
+
+        nav {
+            position: fixed; top: 80px; width: 100%; z-index: 998; text-align: center;
+        }
+        nav a {
+            color: #fff; margin: 0 40px; text-decoration: none; font-weight: 600;
+            font-size: 1.3rem; padding: 10px 20px; border-radius: 30px; transition: 0.3s;
+        }
+        nav a:hover { color: #00f5ff; background: rgba(0,245,255,0.15); box-shadow: 0 0 20px rgba(0,245,255,0.4); }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; position: relative; z-index: 10;
+            padding: 140px 20px 180px;
+        }
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 7.5rem;
+            background: linear-gradient(90deg, #00f5ff, #8a2be2, #ff00ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 60px rgba(0,245,255,0.6); margin-bottom: 25px;
+        }
+        .hero p {
+            font-size: 1.8rem; margin: 20px 0 70px; opacity: 0.9; max-width: 900px;
+        }
+
+        /* Buttons */
+        .btn-3d {
+            display: inline-block; padding: 22px 65px; margin: 15px;
+            font-size: 1.7rem; font-weight: bold; border-radius: 70px;
+            text-decoration: none; transition: all 0.4s;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+            position: relative; z-index: 30;
+        }
+        .btn-cyan    { background: linear-gradient(45deg, #00f5ff, #0099cc); color: #000; }
+        .btn-magenta { background: linear-gradient(45deg, #ff00ff, #cc0099); color: white; }
+        .btn-3d:hover { transform: translateY(-15px) scale(1.1); box-shadow: 0 35px 70px rgba(0,0,0,0.8); }
+
+        /* Features – FIXED SPACING */
+        .features-section {
+            margin-top: clamp(-240px, -18vw, -150px);
+            padding: 80px 20px 140px;
+            position: relative;
+            z-index: 5;
+        }
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            justify-items: center;
+        }
+        .floating-card {
+            width: 100%; max-width: 380px; padding: 36px 32px;
+            background: rgba(255,255,255,0.08); backdrop-filter: blur(18px);
+            border-radius: 24px; border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 15px 60px rgba(0,0,0,0.6); text-align: center;
+            transition: all 0.4s ease;
+        }
+        .floating-card:hover {
+            transform: translateY(-20px);
+            box-shadow: 0 30px 90px rgba(0,245,255,0.35);
+        }
+        .floating-card h3 {
+            font-size: 1.7rem; margin-bottom: 14px;
+            background: linear-gradient(90deg, #00f5ff, #ff00ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .india-bg {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80%; max-width: 1000px; opacity: 0.06; z-index: 2; pointer-events: none;
+        }
+
+        footer {
+            text-align: center; padding: 120px 20px; font-size: 1rem; opacity: 0.7;
+            position: relative; z-index: 10;
+        }
+
+        @media (max-width: 1100px) {
+            .hero h1 { font-size: 5.5rem; }
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 4.5rem; }
+            .hero p { font-size: 1.4rem; }
+            .btn-3d { padding: 18px 50px; font-size: 1.4rem; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="particles-js"></div>
+
+    <div class="ticker">
+        <span>
+            LIVE AQI → 
+            <span class="dot-red">Delhi 412</span>  
+            <span class="dot-orange">Mumbai 168</span>  
+            <span class="dot-yellow">Bangalore 89</span>  
+            <span class="dot-red">Lucknow 401</span>  
+            <span class="dot-red">Kanpur 378</span>  
+            <span class="dot-red">Patna 389</span>  
+            <span class="dot-orange">Hyderabad 134</span>  
+            <span class="dot-green">Chennai 64</span>  
+            <span class="dot-yellow">Kolkata 112</span>
+        </span>
+    </div>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/datasets">Datasets</a>
+        <a href="/about">About</a>
+    </nav>
+
+    <section class="hero">
+        <h1>AQI SHIELD</h1>
+        <p>India's Most Powerful Real-time Air Quality Intelligence Platform</p>
+        <div>
+            <a href="/visualize" class="btn-3d btn-cyan">Live Dashboard</a>
+            <a href="/predict" class="btn-3d btn-magenta">Predict AQI</a>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <div class="features-container">
+            <div class="floating-card">
+                <h3>AI-Powered Prediction</h3>
+                <p>99.1% accuracy using deep learning models</p>
+            </div>
+            <div class="floating-card">
+                <h3>1.2M+ Users</h3>
+                <p>Trusted across India</p>
+            </div>
+            <div class="floating-card">
+                <h3>Hyperlocal Data</h3>
+                <p>Street-level updates every 5 mins</p>
+            </div>
+            <div class="floating-card">
+                <h3>Health Alerts</h3>
+                <p>Instant SMS & push notifications</p>
+            </div>
+        </div>
+    </section>
+
+    <img src="https://svgur.com/i/17cM.svg" alt="India" class="india-bg">
+
+    <footer>
+        © 2025 AQI Shield • Made with passion for Cleaner India • Protecting 1.4 Billion Lungs
+    </footer>
+
+    <script>
+        particlesJS("particles-js", {
+            "particles": { "number": { "value": 80 }, "color": { "value": ["#00f5ff", "#ff00ff", "#8a2be2"] },
+                "opacity": { "value": 0.5, "random": true }, "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#00f5ff", "opacity": 0.2, "width": 1 },
+                "move": { "enable": true, "speed": 2 }
+            },
+            "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" } } },
+            "retina_detect": true
+        });
+    </script>
+
+</body>
+</html>

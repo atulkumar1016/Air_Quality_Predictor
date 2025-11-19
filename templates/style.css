@@ -1,0 +1,38 @@
+/* ===== Features Section – अब बॉक्स बिल्कुल ऊपर-ऊपर (बटन से चिपके हुए) ===== */
+.features-section {
+    padding: 160px 20px 120px 20px;   /* ऊपर से बहुत ज्यादा पैडिंग */
+    margin-top: -380px;               /* ये सबसे बड़ा वाला मैजिक है भाई */
+    position: relative;
+    z-index: 10;
+    pointer-events: none;             /* ऐसा कि बटन क्लिक करने में दिक्कत न हो */
+}
+
+.features-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+    justify-items: center;
+    transform: translateY(-140px);    /* एक्स्ट्रा ऊपर खींच लिया */
+    pointer-events: all;              /* बॉक्स पर क्लिक/होवर काम करे */
+}
+
+/* बाकी सब वही रहेगा – सिर्फ ऊपर वाला हिस्सा चेंज करना है */
+.floating-card {
+    width: 100%;
+    max-width: 380px;
+    padding: 34px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(18px);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 15px 60px rgba(0,0,0,0.6);
+    text-align: center;
+    transition: all 0.4s ease;
+    pointer-events: all;
+}
+.floating-card:hover {
+    transform: translateY(-25px);
+    box-shadow: 0 25px 80px rgba(0,245,255,0.3);
+}
