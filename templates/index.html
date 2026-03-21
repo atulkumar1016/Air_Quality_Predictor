@@ -1,25 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AQI Predictor</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<title>AQI Home</title>
+<style>
+body {background:#000;color:white;text-align:center;font-family:Poppins;}
+a{color:cyan;margin:10px;}
+.btn{padding:15px;background:cyan;color:black;text-decoration:none;}
+</style>
 </head>
 <body>
 
-<nav>
-    <h2>AQI Predictor</h2>
-    <div>
-        <a href="/">Home</a>
-        <a href="/predict">Predict</a>
-        <a href="/about">About</a>
-    </div>
-</nav>
+<h1>AQI Predictor</h1>
+<p>Check Air Quality Easily</p>
 
-<div class="container">
-    <h1>Air Quality Index Prediction</h1>
-    <p>Check air quality easily using our smart system 🌍</p>
-    <a href="/predict" class="btn">Check AQI</a>
-</div>
+<a href="/predict" class="btn">Start</a>
+
+<br><br>
+<a href="/datasets">Datasets</a>
+<a href="/visualize">Visualize</a>
+<a href="/about">About</a>
 
 </body>
 </html>
