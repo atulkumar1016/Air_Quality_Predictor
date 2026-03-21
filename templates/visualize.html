@@ -1,129 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AQI Shield - Data Visualization</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            --card: rgba(255, 255, 255, 0.08);
-            --text: #ffffff;
-            --accent: #00f5ff;
-            --border: rgba(255, 255, 255, 0.15);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 40px 20px;
-            background-attachment: fixed;
-        }
-        .back-btn {
-            position: fixed;
-            top: 25px; left: 25px;
-            background: rgba(0, 245, 255, 0.2);
-            color: white;
-            padding: 14px 28px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            border: 1px solid var(--border);
-            backdrop-filter: blur(10px);
-            transition: 0.4s;
-            z-index: 1000;
-        }
-        .back-btn:hover {
-            background: var(--accent);
-            color: #000;
-            transform: translateY(-5px);
-        }
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        h1 {
-            font-size: 4rem;
-            font-weight: 800;
-            background: linear-gradient(90deg, #00f5ff, #ff00ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-        }
-        .subtitle {
-            font-size: 1.5rem;
-            opacity: 0.9;
-            margin-bottom: 60px;
-            color: #a0e8ff;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 35px;
-        }
-        .plot-card {
-            background: var(--card);
-            backdrop-filter: blur(20px);
-            border-radius: 28px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            transition: all 0.5s ease;
-        }
-        .plot-card:hover {
-            transform: translateY(-20px) scale(1.02);
-            box-shadow: 0 35px 80px rgba(0, 245, 255, 0.4);
-        }
-        .plot-card h3 {
-            padding: 25px;
-            font-size: 1.8rem;
-            font-weight: 600;
-            background: rgba(0, 245, 255, 0.1);
-            color: var(--accent);
-        }
-        .plot-card img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s;
-        }
-        .plot-card:hover img {
-            transform: scale(1.05);
-        }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 2.8rem; }
-            .grid { grid-template-columns: 1fr; }
-        }
-    </style>
+<title>Visualize</title>
 </head>
-<body>
+<body style="background:black;color:white;text-align:center">
 
-    <a href="/" class="back-btn">Back to Home</a>
+<h1>Visualization Page</h1>
+<p>Yaha charts add kar sakta hai</p>
 
-    <div class="container">
-        <h1>Data Visualization</h1>
-        <p class="subtitle">Exploring patterns, correlations & insights from air pollution data</p>
-
-        <div class="grid">
-            <div class="plot-card">
-                <h3>Correlation Heatmap</h3>
-                <img src="/static/heatmap.png" alt="Correlation Heatmap">
-            </div>
-            <div class="plot-card">
-                <h3>Feature Distributions</h3>
-                <img src="/static/distribution.png" alt="Feature Distributions">
-            </div>
-            <div class="plot-card">
-                <h3>Pollution Level Comparison</h3>
-                <img src="/static/barplot.png" alt="Pollution Comparison">
-            </div>
-        </div>
-    </div>
+<a href="/">Back</a>
 
 </body>
 </html>
