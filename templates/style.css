@@ -1,38 +1,165 @@
-/* ===== Features Section – अब बॉक्स बिल्कुल ऊपर-ऊपर (बटन से चिपके हुए) ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #f8f9fc;
+  color: #1f2a44;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  z-index: 1000;
+  padding: 1rem 0;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.04);
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #0e7490;
+  letter-spacing: -0.5px;
+}
+
+.nav-links a {
+  margin-left: 2.4rem;
+  text-decoration: none;
+  color: #4b5563;
+  font-weight: 500;
+  font-size: 1.03rem;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #0e7490;
+}
+
+.hero {
+  padding: 180px 2.5rem 140px;
+  text-align: center;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.hero-content {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 3.4rem;
+  font-weight: 700;
+  line-height: 1.12;
+  color: #0f172a;
+  margin-bottom: 1.4rem;
+}
+
+.hero-subtitle {
+  font-size: 1.38rem;
+  color: #475569;
+  margin-bottom: 2.2rem;
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 1rem 2.2rem;
+  background: #0e7490;
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(14, 116, 144, 0.18);
+}
+
+.btn-primary:hover {
+  background: #0c647d;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(14, 116, 144, 0.28);
+}
+
+/* Features */
 .features-section {
-    padding: 160px 20px 120px 20px;   /* ऊपर से बहुत ज्यादा पैडिंग */
-    margin-top: -380px;               /* ये सबसे बड़ा वाला मैजिक है भाई */
-    position: relative;
-    z-index: 10;
-    pointer-events: none;             /* ऐसा कि बटन क्लिक करने में दिक्कत न हो */
+  padding: 100px 2.5rem;
+  background: #ffffff;
 }
 
 .features-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 40px;
-    justify-items: center;
-    transform: translateY(-140px);    /* एक्स्ट्रा ऊपर खींच लिया */
-    pointer-events: all;              /* बॉक्स पर क्लिक/होवर काम करे */
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 2.2rem;
 }
 
-/* बाकी सब वही रहेगा – सिर्फ ऊपर वाला हिस्सा चेंज करना है */
 .floating-card {
-    width: 100%;
-    max-width: 380px;
-    padding: 34px;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(18px);
-    border-radius: 24px;
-    border: 1px solid rgba(255,255,255,0.12);
-    box-shadow: 0 15px 60px rgba(0,0,0,0.6);
-    text-align: center;
-    transition: all 0.4s ease;
-    pointer-events: all;
+  background: white;
+  border-radius: 16px;
+  padding: 2.4rem 2rem;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.05);
 }
+
 .floating-card:hover {
-    transform: translateY(-25px);
-    box-shadow: 0 25px 80px rgba(0,245,255,0.3);
+  transform: translateY(-12px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.09);
+  border-color: #bfdbfe;
+}
+
+.icon {
+  font-size: 2.8rem;
+  margin-bottom: 1.2rem;
+  color: #0e7490;
+}
+
+.floating-card h3 {
+  font-size: 1.45rem;
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+.floating-card p {
+  color: #64748b;
+  font-size: 1.05rem;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #64748b;
+  font-size: 0.98rem;
+  border-top: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+@media (max-width: 768px) {
+  h1 { font-size: 2.6rem; }
+  .hero { padding-top: 140px; padding-bottom: 100px; }
+  .nav-links a { margin-left: 1.4rem; font-size: 1rem; }
 }
