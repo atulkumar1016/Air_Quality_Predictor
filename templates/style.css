@@ -1,165 +1,59 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - AQI Shield</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
 
-body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: #f8f9fc;
-  color: #1f2a44;
-  line-height: 1.6;
-  min-height: 100vh;
-}
+    <nav>
+        <div class="nav-container">
+            <div class="logo">AQI Shield</div>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('datasets') }}">Datasets</a>
+                <a href="{{ url_for('about') }}" class="active">About</a>
+                <a href="{{ url_for('predict') }}">Predict</a>
+            </div>
+        </div>
+    </nav>
 
-nav {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
-  z-index: 1000;
-  padding: 1rem 0;
-  box-shadow: 0 2px 15px rgba(0,0,0,0.04);
-}
+    <main>
+        <section class="hero">
+            <h1>About AQI Shield</h1>
+            <p>India's most advanced real-time air quality intelligence platform — protecting health through data and AI.</p>
+        </section>
 
-.nav-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+        <section class="section">
+            <div class="card">
+                <h2>Our Mission</h2>
+                <p>To make every Indian breathe safer by providing accurate, hyperlocal, real-time air quality information and predictive insights.</p>
+            </div>
 
-.logo {
-  font-size: 1.55rem;
-  font-weight: 700;
-  color: #0e7490;
-  letter-spacing: -0.5px;
-}
+            <div class="card">
+                <h2>What We Provide</h2>
+                <ul style="padding-left: 1.4rem; margin: 1.2rem 0;">
+                    <li>Live AQI from hundreds of monitoring stations</li>
+                    <li>AI-based 24-hour pollution forecast</li>
+                    <li>Street-level hyperlocal pollution tracking</li>
+                    <li>Health alerts & activity recommendations</li>
+                    <li>Free open datasets for students & researchers</li>
+                    <li>Detailed breakdown: PM2.5, PM10, NO₂, SO₂, CO, O₃</li>
+                </ul>
+            </div>
 
-.nav-links a {
-  margin-left: 2.4rem;
-  text-decoration: none;
-  color: #4b5563;
-  font-weight: 500;
-  font-size: 1.03rem;
-  transition: color 0.2s;
-}
+            <div class="card">
+                <h2>Why It Matters</h2>
+                <p>Air pollution shortens millions of lives every year in India. We exist to turn complex data into simple, life-saving decisions.</p>
+            </div>
+        </section>
+    </main>
 
-.nav-links a:hover,
-.nav-links a.active {
-  color: #0e7490;
-}
+    <footer>
+        <p>© 2025 AQI Shield • Made for a cleaner & healthier India</p>
+    </footer>
 
-.hero {
-  padding: 180px 2.5rem 140px;
-  text-align: center;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-}
-
-.hero-content {
-  max-width: 920px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: 3.4rem;
-  font-weight: 700;
-  line-height: 1.12;
-  color: #0f172a;
-  margin-bottom: 1.4rem;
-}
-
-.hero-subtitle {
-  font-size: 1.38rem;
-  color: #475569;
-  margin-bottom: 2.2rem;
-  max-width: 680px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.btn-primary {
-  display: inline-block;
-  padding: 1rem 2.2rem;
-  background: #0e7490;
-  color: white;
-  font-weight: 600;
-  font-size: 1.1rem;
-  border-radius: 12px;
-  text-decoration: none;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 14px rgba(14, 116, 144, 0.18);
-}
-
-.btn-primary:hover {
-  background: #0c647d;
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(14, 116, 144, 0.28);
-}
-
-/* Features */
-.features-section {
-  padding: 100px 2.5rem;
-  background: #ffffff;
-}
-
-.features-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 2.2rem;
-}
-
-.floating-card {
-  background: white;
-  border-radius: 16px;
-  padding: 2.4rem 2rem;
-  text-align: center;
-  border: 1px solid #e5e7eb;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.05);
-}
-
-.floating-card:hover {
-  transform: translateY(-12px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.09);
-  border-color: #bfdbfe;
-}
-
-.icon {
-  font-size: 2.8rem;
-  margin-bottom: 1.2rem;
-  color: #0e7490;
-}
-
-.floating-card h3 {
-  font-size: 1.45rem;
-  margin-bottom: 1rem;
-  color: #1e293b;
-}
-
-.floating-card p {
-  color: #64748b;
-  font-size: 1.05rem;
-}
-
-/* Footer */
-footer {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #64748b;
-  font-size: 0.98rem;
-  border-top: 1px solid #e5e7eb;
-  background: #ffffff;
-}
-
-@media (max-width: 768px) {
-  h1 { font-size: 2.6rem; }
-  .hero { padding-top: 140px; padding-bottom: 100px; }
-  .nav-links a { margin-left: 1.4rem; font-size: 1rem; }
-}
+</body>
+</html>
