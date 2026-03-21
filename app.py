@@ -1,9 +1,8 @@
 from flask import Flask, render_template, request
-import pandas as pd   # <-- CSV ko load karne ke liye
+import pandas as pd
+import os
 
 app = Flask(__name__)
-
-print("AQI Project start ho raha hai...")
 
 @app.route('/')
 def home():
@@ -45,22 +44,18 @@ def predict():
                 color=col,
                 message=msg
             )
+
         except:
-            return render_template('predict.html', error="Number hi daal bhai!")
+            return render_template('predict.html', error="Number hi daal bhai!", show=False)
 
     return render_template('predict.html', show=False)
 
-# =============================
-# NEW UPDATED DATASETS ROUTE
-# =============================
+
 @app.route('/datasets')
 def datasets():
-    # 👇👇 Yaha apne dataset ka exact file name lagana
-    df = pd.read_csv("cleaned_pollution_data.csv")
-
-    # DataFrame ko HTML table me convert karo
-    table_html = df.to_html(classes='table table-dark table-striped', index=False)
-
+    path = os.path.join(os.path.dirname(__file__), "cleaned_pollution_data.csv")
+    df = pd.read_csv(path)
+    table_html = df.to_html(classes='table', index=False)
     return render_template('datasets.html', table=table_html)
 
 
@@ -68,6 +63,6 @@ def datasets():
 def about():
     return render_template('about.html')
 
+
 if __name__ == '__main__':
-    print("AQI Shield LIVE → http://127.0.0.1:5000")
     app.run(debug=True)
