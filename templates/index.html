@@ -1,77 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AQI Shield - Real-time Air Quality Intelligence</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>AQI Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-  <nav>
-    <div class="nav-container">
-      <div class="logo">AQI Shield</div>
-      <div class="nav-links">
-        <a href="{{ url_for('index') }}" class="active">Home</a>
-        <a href="{{ url_for('datasets') }}">Datasets</a>
-        <a href="{{ url_for('about') }}">About</a>
-        <a href="{{ url_for('predict') }}">Predict</a>   <!-- agar predict route hai to -->
-      </div>
+<nav>
+    <h2>AQI Predictor</h2>
+    <div>
+        <a href="/">Home</a>
+        <a href="/predict">Predict</a>
+        <a href="/about">About</a>
     </div>
-  </nav>
+</nav>
 
-  <header class="hero">
-    <div class="hero-content">
-      <h1>Protecting 1.4 Billion Lives<br>with Real-time Air Intelligence</h1>
-      <p class="hero-subtitle">India's most advanced platform for hyperlocal AQI monitoring, AI-powered forecasts, and health-protective insights.</p>
-      <a href="#features" class="btn-primary">Explore Features</a>
-    </div>
-  </header>
-
-  <section id="features" class="features-section">
-    <div class="features-container">
-      <div class="floating-card">
-        <div class="icon">⚡</div>
-        <h3>Real-time Monitoring</h3>
-        <p>Live AQI data from hundreds of stations across India — updated every few minutes.</p>
-      </div>
-
-      <div class="floating-card">
-        <div class="icon">🤖</div>
-        <h3>24-Hour AI Forecast</h3>
-        <p>Machine learning powered prediction of AQI and major pollutants for tomorrow.</p>
-      </div>
-
-      <div class="floating-card">
-        <div class="icon">📍</div>
-        <h3>Hyperlocal Accuracy</h3>
-        <p>Street-level pollution insights — know what's happening in your neighbourhood.</p>
-      </div>
-
-      <div class="floating-card">
-        <div class="icon">🫁</div>
-        <h3>Health Recommendations</h3>
-        <p>Personalized guidance based on AQI, age group, activity level & health conditions.</p>
-      </div>
-
-      <div class="floating-card">
-        <div class="icon">📊</div>
-        <h3>Open Datasets</h3>
-        <p>Free historical & real-time data for researchers, students and developers.</p>
-      </div>
-
-      <div class="floating-card">
-        <div class="icon">🌫️</div>
-        <h3>6-Pollutant Breakdown</h3>
-        <p>PM2.5, PM10, NO₂, SO₂, CO, O₃ — detailed concentration & AQI contribution.</p>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <p>© 2025–2026 AQI Shield. Made with care for a healthier India.</p>
-  </footer>
+<div class="container">
+    <h1>Air Quality Index Prediction</h1>
+    <p>Check air quality easily using our smart system 🌍</p>
+    <a href="/predict" class="btn">Check AQI</a>
+</div>
 
 </body>
 </html>
