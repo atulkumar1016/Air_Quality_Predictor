@@ -1,182 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Datasets - AQI Shield</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-
-<style>
-    body{background:#0a0a1a;color:#fff;font-family:Arial;padding-top:80px}
-    nav{position:fixed;top:0;width:100%;background:#111;padding:15px;text-align:center;z-index:999}
-    nav a{color:#0ff;margin:0 30px;text-decoration:none;font-size:1.3rem}
-    nav a:hover{color:#f0f}
-    table{background:#111 !important;color:#fff !important;font-size:0.92rem;}
-    th{background:#222 !important;color:#0ff !important;}
-
-    h1{
-        text-align:center;
-        background:linear-gradient(90deg,#0ff,#f0f);
-        -webkit-background-clip:text;
-        -webkit-text-fill-color:transparent;
-    }
-
-    select{
-        width:260px;
-        padding:10px;
-        margin-right:15px;
-        font-size:1rem;
-        margin-bottom:20px;
-        border-radius:6px;
-    }
-</style>
-
+<title>Datasets</title>
 </head>
+<body style="background:black;color:white;text-align:center">
 
-<body>
+<h1>Dataset</h1>
 
-<nav>
-    <a href="/">Home</a>
-    <a href="/datasets">Datasets</a>
-    <a href="/about">About</a>
-</nav>
-
-<div class="container mt-5">
-
-    <h1 class="my-5">Complete Dataset (Excel Style)</h1>
-
-    <!-- FILTERS -->
-    <label style="font-size:1.1rem;">State:</label>
-    <select id="stateFilter">
-        <option value="All">All States</option>
-    </select>
-
-    <label style="font-size:1.1rem;">City:</label>
-    <select id="cityFilter">
-        <option value="All">All Cities</option>
-    </select>
-
-    <!-- TABLE FROM FLASK -->
-    <div id="tableContainer">
-        {{ table | safe }}
-    </div>
-
+<div>
+    {{ table|safe }}
 </div>
 
-
-<script>
-$(document).ready(function(){
-
-    // ============================
-    // FIND COLUMN INDEXES
-    // ============================
-
-    let headers = $("table thead tr th")
-        .map(function(){ return $(this).text().toLowerCase(); })
-        .get();
-
-    let stateIndex = headers.indexOf("state");
-    let cityIndex  = headers.indexOf("city");
-
-    if(stateIndex === -1){
-        stateIndex = headers.findIndex(h => h.includes("state"));
-    }
-    if(cityIndex === -1){
-        cityIndex = headers.findIndex(h => h.includes("city"));
-    }
-
-    // ============================
-    // EXTRACT UNIQUE STATES AND CITIES
-    // ============================
-
-    let citiesByState = {};   // {state: [cities]}
-
-    let allStates = new Set();
-    let allCities = new Set();
-
-    $("table tbody tr").each(function(){
-        let state = $(this).find("td").eq(stateIndex).text().trim();
-        let city  = $(this).find("td").eq(cityIndex).text().trim();
-
-        allStates.add(state);
-        allCities.add(city);
-
-        if(!citiesByState[state]){
-            citiesByState[state] = new Set();
-        }
-        citiesByState[state].add(city);
-    });
-
-    // Sort and Fill dropdown state
-    allStates = Array.from(allStates).sort();
-    allStates.forEach(s => {
-        $("#stateFilter").append(`<option value="${s}">${s}</option>`);
-    });
-
-    // Fill city (initially all)
-    allCities = Array.from(allCities).sort();
-    allCities.forEach(c => {
-        $("#cityFilter").append(`<option value="${c}">${c}</option>`);
-    });
-
-
-    // ============================
-    // APPLY TABLE ROW FILTERING
-    // ============================
-
-    function applyFilters(){
-        let selectedState = $("#stateFilter").val();
-        let selectedCity  = $("#cityFilter").val();
-
-        $("table tbody tr").each(function(){
-            let rowState = $(this).find("td").eq(stateIndex).text().trim();
-            let rowCity  = $(this).find("td").eq(cityIndex).text().trim();
-
-            let stateMatch = (selectedState === "All" || rowState === selectedState);
-            let cityMatch  = (selectedCity === "All" || rowCity === selectedCity);
-
-            if(stateMatch && cityMatch){
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        });
-    }
-
-
-    // ============================
-    // UPDATE CITY DROPDOWN BASED ON STATE
-    // ============================
-
-    $("#stateFilter").on("change", function(){
-        let selectedState = $(this).val();
-
-        $("#cityFilter").empty();  // reset
-        $("#cityFilter").append(`<option value="All">All Cities</option>`);
-
-        if(selectedState === "All"){
-            // show every city
-            allCities.forEach(c => {
-                $("#cityFilter").append(`<option value="${c}">${c}</option>`);
-            });
-        } else {
-            // show only cities belonging to selected state
-            let filteredCities = Array.from(citiesByState[selectedState]).sort();
-            filteredCities.forEach(c => {
-                $("#cityFilter").append(`<option value="${c}">${c}</option>`);
-            });
-        }
-
-        applyFilters();
-    });
-
-    $("#cityFilter").on("change", function(){
-        applyFilters();
-    });
-
-});
-</script>
+<br>
+<a href="/">Back</a>
 
 </body>
 </html>
