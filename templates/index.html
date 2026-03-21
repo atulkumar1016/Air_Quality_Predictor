@@ -1,24 +1,174 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>AQI Home</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQI Shield</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
 <style>
-body {background:#000;color:white;text-align:center;font-family:Poppins;}
-a{color:cyan;margin:10px;}
-.btn{padding:15px;background:cyan;color:black;text-decoration:none;}
+
+/* ===== BODY ===== */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at top, #0a192f, #000);
+    color: white;
+}
+
+/* ===== NAVBAR ===== */
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+}
+
+nav h2 {
+    color: #00f5ff;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 25px;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: #00f5ff;
+}
+
+/* ===== HERO SECTION ===== */
+.hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 80px 60px;
+    flex-wrap: wrap;
+}
+
+.hero-text {
+    max-width: 500px;
+}
+
+.hero h1 {
+    font-size: 3.2rem;
+    background: linear-gradient(90deg, #00f5ff, #ff00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+    margin-top: 20px;
+    color: #aaa;
+}
+
+/* ===== BUTTON ===== */
+.btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 15px 45px;
+    background: linear-gradient(90deg, #00f5ff, #ff00ff);
+    color: black;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    transform: scale(1.08);
+}
+
+/* ===== CARD SECTION ===== */
+.cards {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    padding: 40px;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 250px;
+    padding: 30px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(15px);
+    text-align: center;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 25px rgba(0,255,255,0.3);
+}
+
+.card h3 {
+    color: #00f5ff;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+    font-size: 0.9rem;
+}
+
 </style>
 </head>
+
 <body>
 
-<h1>AQI Predictor</h1>
-<p>Check Air Quality Easily</p>
+<!-- NAVBAR -->
+<nav>
+    <h2>AQI Shield</h2>
+    <div>
+        <a href="/">Home</a>
+        <a href="/predict">Predict</a>
+        <a href="/datasets">Datasets</a>
+        <a href="/visualize">Visualize</a>
+        <a href="/about">About</a>
+    </div>
+</nav>
 
-<a href="/predict" class="btn">Start</a>
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-text">
+        <h1>Air Quality Analyzer</h1>
+        <p>Monitor pollution levels and stay safe with smart AQI prediction.</p>
+        <a href="/predict" class="btn">Check AQI</a>
+    </div>
+</section>
 
-<br><br>
-<a href="/datasets">Datasets</a>
-<a href="/visualize">Visualize</a>
-<a href="/about">About</a>
+<!-- FEATURES -->
+<section class="cards">
+
+    <div class="card">
+        <h3>Prediction</h3>
+        <p>Instant AQI calculation using pollution inputs.</p>
+    </div>
+
+    <div class="card">
+        <h3>Datasets</h3>
+        <p>Explore pollution datasets in tabular form.</p>
+    </div>
+
+    <div class="card">
+        <h3>Visualization</h3>
+        <p>Analyze trends using charts and graphs.</p>
+    </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+    © 2026 AQI Shield | Built by You 🚀
+</footer>
 
 </body>
 </html>
