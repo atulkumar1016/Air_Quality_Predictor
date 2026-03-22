@@ -1,18 +1,186 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Datasets</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datasets — AQI Shield</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;min-height:100vh;overflow-x:hidden;font-family:'DM Sans',sans-serif}
+body{background:#ffffff;color:#1a2744}
+
+#cloudCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.page{position:relative;z-index:1;min-height:100vh;padding-bottom:60px}
+
+/* NAVBAR */
+nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 60px;
+  background:rgba(255,255,255,0.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(59,130,246,0.12);
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 1px 24px rgba(59,130,246,0.06);
+}
+.logo{font-family:'Syne',sans-serif;font-size:1.55rem;font-weight:800;color:#1e40af;letter-spacing:-0.5px}
+.logo span{color:#60a5fa}
+.nav-links{display:flex;gap:4px}
+.nav-links a{color:#64748b;text-decoration:none;padding:8px 16px;border-radius:10px;font-size:.9rem;font-weight:500;transition:all .22s}
+.nav-links a:hover{color:#1e40af;background:rgba(59,130,246,0.07)}
+
+/* HEADER */
+.page-header{
+  text-align:center;padding:60px 40px 30px;
+  animation:fadeUp .8s ease both;
+}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;color:#3b82f6;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.page-header h1{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;letter-spacing:-2px;color:#0f172a}
+.page-header h1 em{font-style:normal;background:linear-gradient(135deg,#1d4ed8,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.page-header p{margin-top:12px;color:#64748b;font-size:1rem}
+
+/* TABLE WRAPPER */
+.table-wrap{
+  max-width:1100px;margin:32px auto;padding:0 32px;
+  animation:fadeUp .95s ease .15s both;
+}
+.table-card{
+  background:rgba(255,255,255,0.94);
+  border:1px solid rgba(59,130,246,0.12);
+  border-radius:22px;
+  box-shadow:0 4px 28px rgba(59,130,246,0.08);
+  overflow:hidden;
+}
+
+/* Override Flask table styles */
+.table-card table{
+  width:100%;border-collapse:collapse;font-size:.88rem;
+}
+.table-card table thead tr{
+  background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+  color:#fff;
+}
+.table-card table thead th{
+  padding:14px 18px;text-align:left;font-weight:600;
+  font-family:'DM Sans',sans-serif;letter-spacing:.03em;font-size:.82rem;
+  text-transform:uppercase;
+}
+.table-card table tbody tr{
+  border-bottom:1px solid rgba(59,130,246,0.07);
+  transition:.18s;
+}
+.table-card table tbody tr:last-child{border-bottom:none}
+.table-card table tbody tr:hover{background:rgba(239,246,255,0.7)}
+.table-card table tbody td{
+  padding:13px 18px;color:#334155;font-size:.88rem;
+}
+
+/* Fallback if table is plain text */
+.table-card div{padding:32px;color:#64748b}
+
+.back-link{
+  display:block;text-align:center;margin-top:28px;
+  color:#3b82f6;font-size:.9rem;font-weight:500;text-decoration:none;transition:.2s;
+}
+.back-link:hover{color:#1d4ed8}
+
+footer{text-align:center;padding:32px;color:#94a3b8;font-size:.82rem;border-top:1px solid rgba(59,130,246,0.07);background:#fff;margin-top:48px}
+footer span{color:#3b82f6;font-weight:600}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:680px){
+  nav{padding:16px 20px}.nav-links a{padding:6px 10px;font-size:.82rem}
+  .table-wrap{padding:0 14px}.page-header h1{font-size:2rem}
+}
+</style>
 </head>
-<body style="background:black;color:white;text-align:center">
+<body>
 
-<h1>Dataset</h1>
+<canvas id="cloudCanvas"></canvas>
 
-<div>
-    {{ table|safe }}
+<div class="page">
+<nav>
+  <div class="logo">AQI<span>Shield</span></div>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/predict">Predict</a>
+    <a href="/datasets">Datasets</a>
+    <a href="/visualize">Visualize</a>
+    <a href="/about">About</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="eyebrow">Pollution Records</div>
+  <h1>Air Quality <em>Dataset</em></h1>
+  <p>Historical pollution data — explore and analyze pollutant records</p>
 </div>
 
-<br>
-<a href="/">Back</a>
+<div class="table-wrap">
+  <div class="table-card">
+    {{ table|safe }}
+  </div>
+  <a href="/" class="back-link">← Back to Home</a>
+</div>
 
+<footer>© 2026 <span>AQI Shield</span> · Built with ❤️ for environment safety 🚀</footer>
+</div>
+
+<script>
+const canvas = document.getElementById('cloudCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+
+class Cloud {
+  constructor(layer) { this.layer = layer; this.reset(true); }
+  reset(init) {
+    const l = this.layer;
+    this.y = H * (0.04 + l * 0.14 + Math.random() * 0.12);
+    this.x = init ? Math.random() * W * 1.4 - W * 0.2 : -W * 0.4;
+    this.w = 180 + l * 100 + Math.random() * 160;
+    this.h = this.w * (0.25 + Math.random() * 0.12);
+    this.speed = 0.25 + l * 0.2 + Math.random() * 0.2;
+    this.alpha = 0.055 + l * 0.03 + Math.random() * 0.025;
+    this.puffs = [];
+    const n = 5 + Math.floor(Math.random() * 5);
+    for (let i = 0; i < n; i++) {
+      this.puffs.push({
+        ox: (i / (n - 1) - 0.5) * this.w * 0.88,
+        oy: (Math.random() - 0.5) * this.h * 0.5,
+        r: this.h * (0.4 + Math.random() * 0.32)
+      });
+    }
+  }
+  draw() {
+    ctx.save(); ctx.translate(this.x, this.y);
+    this.puffs.forEach(p => {
+      const grad = ctx.createRadialGradient(p.ox, p.oy - p.r * 0.12, p.r * 0.05, p.ox, p.oy, p.r);
+      const a = this.alpha;
+      grad.addColorStop(0,    `rgba(96,165,250,${a * 2.2})`);
+      grad.addColorStop(0.35, `rgba(147,197,253,${a * 1.4})`);
+      grad.addColorStop(0.7,  `rgba(191,219,254,${a * 0.7})`);
+      grad.addColorStop(1,    `rgba(219,234,254,0)`);
+      ctx.beginPath(); ctx.arc(p.ox, p.oy, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = grad; ctx.fill();
+    });
+    ctx.restore();
+  }
+  update() { this.x += this.speed; if (this.x > W * 1.4) this.reset(false); }
+}
+const clouds = [];
+for (let l = 0; l < 3; l++) {
+  const n = l === 0 ? 5 : l === 1 ? 4 : 3;
+  for (let i = 0; i < n; i++) clouds.push(new Cloud(l));
+}
+function loop() {
+  ctx.clearRect(0, 0, W, H);
+  clouds.sort((a, b) => a.layer - b.layer);
+  clouds.forEach(c => { c.update(); c.draw(); });
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
 </body>
 </html>
