@@ -39,13 +39,12 @@ nav{
 .page-header h1 em{font-style:normal;background:linear-gradient(135deg,#1d4ed8,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .page-header p{margin-top:12px;color:#64748b;font-size:1rem}
 
-/* CHARTS GRID */
+/* CHARTS WRAP */
 .charts-wrap{
-  max-width:1100px;margin:32px auto;padding:0 32px;
-  animation:fadeUp .95s ease .15s both;
+  max-width:1000px;margin:32px auto;padding:0 32px;
 }
 
-/* Each chart block */
+/* CHART CARD */
 .chart-card{
   background:rgba(255,255,255,0.94);
   border:1px solid rgba(59,130,246,0.12);
@@ -53,6 +52,7 @@ nav{
   margin-bottom:24px;
   box-shadow:0 4px 28px rgba(59,130,246,0.07);
   transition:.3s;
+  animation:fadeUp 1s ease both;
 }
 .chart-card:hover{
   border-color:rgba(59,130,246,0.28);
@@ -60,40 +60,23 @@ nav{
   transform:translateY(-3px);
 }
 .chart-card h2{
-  font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;
-  color:#1e40af;margin-bottom:20px;
+  font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;
+  color:#1e40af;margin-bottom:6px;
   display:flex;align-items:center;gap:10px;
 }
+.chart-card p{font-size:.85rem;color:#94a3b8;margin-bottom:20px}
 .chart-card img{
   width:100%;border-radius:14px;
   border:1px solid rgba(59,130,246,0.08);
+  display:block;
 }
 
-/* If charts are passed as base64 or file paths */
-.chart-container{
-  width:100%;overflow:hidden;border-radius:14px;
-  background:rgba(239,246,255,0.4);
-  min-height:300px;display:flex;align-items:center;justify-content:center;
-}
-.chart-container img{width:100%;border-radius:14px}
-
-/* Two column grid for smaller charts */
+/* TWO COLUMN GRID */
 .chart-grid-2{
   display:grid;grid-template-columns:repeat(2,1fr);
   gap:20px;margin-bottom:24px;
 }
-
-/* Plot iframe if matplotlib sends HTML */
-.chart-card iframe{
-  width:100%;height:420px;border:none;border-radius:14px;
-}
-
-/* Fallback empty state */
-.empty-state{
-  text-align:center;padding:60px 20px;color:#94a3b8;
-}
-.empty-state h3{font-family:'Syne',sans-serif;font-size:1.4rem;color:#cbd5e1;margin-bottom:10px}
-.empty-state p{font-size:.9rem}
+.chart-grid-2 .chart-card{margin-bottom:0}
 
 .back-link{
   display:block;text-align:center;margin-top:28px;
@@ -133,81 +116,31 @@ footer span{color:#3b82f6;font-weight:600}
 <div class="page-header">
   <div class="eyebrow">Data Insights</div>
   <h1>Air Quality <em>Visualizer</em></h1>
-  <p>Analyze pollution trends through interactive charts and graphs</p>
+  <p>Pollution trends analyzed through charts and graphs</p>
 </div>
 
 <div class="charts-wrap">
 
-  <!-- ── FLASK WILL INJECT CHARTS HERE ──
-       Teri app.py jo bhi charts/images bhejti hai,
-       unhe yahan render kar.
-       Example patterns neeche diye hain:
-  -->
-
-  {% if img1 %}
+  <!-- BARPLOT — full width -->
   <div class="chart-card" style="animation-delay:.05s">
-    <h2>📊 PM2.5 & PM10 Trend</h2>
-    <div class="chart-container">
-      <img src="data:image/png;base64,{{ img1 }}" alt="PM2.5 PM10 chart">
+    <h2>📊 Pollutant Bar Chart</h2>
+    <p>Average concentration levels of PM2.5, PM10, NO₂ and SO₂</p>
+    <img src="{{ url_for('static', filename='barplot.png') }}" alt="Bar Plot">
+  </div>
+
+  <!-- DISTRIBUTION + HEATMAP — two columns -->
+  <div class="chart-grid-2">
+    <div class="chart-card" style="animation-delay:.15s">
+      <h2>📈 AQI Distribution</h2>
+      <p>Frequency distribution of AQI values across the dataset</p>
+      <img src="{{ url_for('static', filename='distribution.png') }}" alt="Distribution Plot">
+    </div>
+    <div class="chart-card" style="animation-delay:.25s">
+      <h2>🌡️ Correlation Heatmap</h2>
+      <p>Correlation between different pollutants and AQI</p>
+      <img src="{{ url_for('static', filename='heatmap.png') }}" alt="Heatmap">
     </div>
   </div>
-  {% endif %}
-
-  {% if img2 %}
-  <div class="chart-card" style="animation-delay:.15s">
-    <h2>🌫️ NO₂ & SO₂ Levels</h2>
-    <div class="chart-container">
-      <img src="data:image/png;base64,{{ img2 }}" alt="NO2 SO2 chart">
-    </div>
-  </div>
-  {% endif %}
-
-  {% if img3 %}
-  <div class="chart-card" style="animation-delay:.25s">
-    <h2>📈 AQI Distribution</h2>
-    <div class="chart-container">
-      <img src="data:image/png;base64,{{ img3 }}" alt="AQI distribution chart">
-    </div>
-  </div>
-  {% endif %}
-
-  {% if plot_url %}
-  <div class="chart-card">
-    <h2>📊 Pollution Analysis</h2>
-    <div class="chart-container">
-      <img src="{{ plot_url }}" alt="Pollution chart">
-    </div>
-  </div>
-  {% endif %}
-
-  {% if charts %}
-    {% for chart in charts %}
-    <div class="chart-card" style="animation-delay:{{ loop.index * 0.1 }}s">
-      <h2>📊 {{ chart.title if chart.title else 'Chart ' + loop.index|string }}</h2>
-      <div class="chart-container">
-        <img src="data:image/png;base64,{{ chart.data }}" alt="chart">
-      </div>
-    </div>
-    {% endfor %}
-  {% endif %}
-
-  {% if graph %}
-  <div class="chart-card">
-    <h2>📈 Visualization</h2>
-    <div class="chart-container">
-      {{ graph | safe }}
-    </div>
-  </div>
-  {% endif %}
-
-  {% if not img1 and not img2 and not img3 and not plot_url and not charts and not graph %}
-  <div class="chart-card">
-    <div class="empty-state">
-      <h3>📊 Charts load ho rahe hain...</h3>
-      <p>Teri Flask app ke visualize route se data aa jayega yahan automatically.</p>
-    </div>
-  </div>
-  {% endif %}
 
   <a href="/" class="back-link">← Back to Home</a>
 </div>
