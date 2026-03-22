@@ -4,171 +4,371 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AQI Shield</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;min-height:100vh;overflow-x:hidden;font-family:'DM Sans',sans-serif}
+body{background:#ffffff;color:#1a2744}
 
-/* ===== BODY ===== */
-body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: radial-gradient(circle at top, #0a192f, #000);
-    color: white;
+#cloudCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+.page{position:relative;z-index:1;min-height:100vh}
+
+/* NAVBAR */
+nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 60px;
+  background:rgba(255,255,255,0.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(59,130,246,0.12);
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 1px 24px rgba(59,130,246,0.06);
+}
+.logo{
+  font-family:'Syne',sans-serif;font-size:1.55rem;font-weight:800;
+  color:#1e40af;letter-spacing:-0.5px;
+}
+.logo span{color:#60a5fa}
+.nav-links{display:flex;gap:4px}
+.nav-links a{
+  color:#64748b;text-decoration:none;
+  padding:8px 16px;border-radius:10px;font-size:.9rem;font-weight:500;
+  transition:all .22s;
+}
+.nav-links a:hover{color:#1e40af;background:rgba(59,130,246,0.07)}
+
+/* HERO */
+.hero{text-align:center;padding:120px 40px 90px;position:relative}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(59,130,246,0.08);
+  border:1px solid rgba(59,130,246,0.2);
+  border-radius:999px;padding:7px 22px;
+  font-size:.76rem;color:#2563eb;font-weight:600;
+  letter-spacing:.07em;text-transform:uppercase;
+  margin-bottom:36px;animation:fadeUp .7s ease both;
+}
+.dot{width:7px;height:7px;border-radius:50%;background:#3b82f6;display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.5)}50%{box-shadow:0 0 0 8px rgba(59,130,246,0)}}
+
+h1{
+  font-family:'Syne',sans-serif;font-size:4rem;font-weight:800;
+  line-height:1.08;letter-spacing:-2.5px;color:#0f172a;
+  animation:fadeUp .85s ease .1s both;max-width:680px;margin:0 auto;
+}
+h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,#1d4ed8,#3b82f6,#60a5fa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub{
+  margin:22px auto 0;color:#64748b;
+  font-size:1.08rem;max-width:480px;line-height:1.75;font-weight:400;
+  animation:fadeUp .95s ease .2s both;
+}
+.hero-cta{
+  margin-top:42px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+  animation:fadeUp 1s ease .32s both;
+}
+.btn-p{
+  padding:14px 44px;
+  background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+  color:#fff;border:none;border-radius:14px;
+  font-size:.97rem;font-weight:600;cursor:pointer;
+  text-decoration:none;display:inline-block;
+  box-shadow:0 4px 30px rgba(59,130,246,0.35);
+  transition:all .28s;
+}
+.btn-p:hover{transform:translateY(-3px);box-shadow:0 8px 48px rgba(59,130,246,0.5)}
+.btn-s{
+  padding:14px 36px;
+  background:#fff;color:#2563eb;
+  border:1.5px solid rgba(59,130,246,0.3);
+  border-radius:14px;font-size:.97rem;font-weight:500;
+  text-decoration:none;display:inline-block;transition:all .25s;
+}
+.btn-s:hover{background:rgba(59,130,246,0.05);border-color:rgba(59,130,246,0.55)}
+
+/* GAUGE */
+.gauge-wrap{margin-top:64px;animation:fadeUp 1s ease .48s both}
+.gauge-outer{width:260px;height:148px;margin:0 auto;position:relative}
+.gauge-shadow{
+  position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+  width:200px;height:40px;
+  background:radial-gradient(ellipse,rgba(59,130,246,0.14) 0%,transparent 70%);
+}
+.gauge-val{
+  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+  font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;color:#1e40af;
+  line-height:1;white-space:nowrap;
+}
+.gauge-tag{
+  position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);
+  font-size:.7rem;letter-spacing:.1em;color:#60a5fa;white-space:nowrap;font-weight:600;
 }
 
-/* ===== NAVBAR ===== */
-nav {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px 60px;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
+/* STATS */
+.stats{
+  display:flex;justify-content:center;
+  border-top:1px solid rgba(59,130,246,0.08);
+  border-bottom:1px solid rgba(59,130,246,0.08);
+  background:rgba(239,246,255,0.7);
+  animation:fadeUp 1s ease .6s both;
 }
+.stat{flex:1;max-width:200px;padding:30px 20px;text-align:center;border-right:1px solid rgba(59,130,246,0.07)}
+.stat:last-child{border-right:none}
+.s-num{font-family:'Syne',sans-serif;font-size:1.85rem;font-weight:800;color:#1d4ed8}
+.s-lbl{font-size:.72rem;color:#94a3b8;margin-top:5px;letter-spacing:.05em;text-transform:uppercase}
 
-nav h2 {
-    color: #00f5ff;
+/* FEATURES */
+.features{padding:96px 48px;text-align:center;background:#fff}
+.sec-eye{font-size:.72rem;letter-spacing:.14em;color:#3b82f6;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.sec-title{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;letter-spacing:-1px;color:#0f172a;margin-bottom:52px}
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:880px;margin:0 auto}
+.fcard{
+  background:#fff;border:1px solid rgba(59,130,246,0.12);
+  border-radius:20px;padding:34px 26px;text-align:left;
+  transition:all .3s;box-shadow:0 2px 16px rgba(59,130,246,0.04);
+  animation:fadeUp 1s ease both;
 }
-
-nav a {
-    color: white;
-    text-decoration: none;
-    margin-left: 25px;
-    transition: 0.3s;
+.fcard:hover{transform:translateY(-7px);border-color:rgba(59,130,246,0.3);box-shadow:0 16px 48px rgba(59,130,246,0.1)}
+.ficon{
+  width:48px;height:48px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(59,130,246,0.05));
+  border:1px solid rgba(59,130,246,0.18);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;margin-bottom:18px;
 }
+.fcard h3{font-family:'Syne',sans-serif;font-size:1.08rem;font-weight:700;color:#0f172a;margin-bottom:9px}
+.fcard p{font-size:.87rem;color:#64748b;line-height:1.7}
+.fcard a{display:inline-flex;align-items:center;gap:5px;margin-top:16px;color:#2563eb;font-size:.82rem;font-weight:600;text-decoration:none;transition:.2s}
+.fcard a:hover{gap:10px}
 
-nav a:hover {
-    color: #00f5ff;
+/* POLLUTANTS */
+.polls{padding:80px 48px;background:rgba(239,246,255,0.5);border-top:1px solid rgba(59,130,246,0.07)}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:860px;margin:48px auto 0}
+.pcard{
+  background:#fff;border:1px solid rgba(59,130,246,0.12);
+  border-radius:18px;padding:28px 16px;text-align:center;
+  transition:.3s;box-shadow:0 2px 12px rgba(59,130,246,0.04);
 }
+.pcard:hover{border-color:rgba(59,130,246,0.35);transform:translateY(-4px);box-shadow:0 10px 32px rgba(59,130,246,0.1)}
+.pf{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#1d4ed8}
+.pn{font-size:.72rem;color:#94a3b8;margin-top:6px;line-height:1.5}
+.pr{margin-top:10px;background:rgba(59,130,246,0.08);border-radius:8px;padding:3px 10px;font-size:.67rem;color:#2563eb;display:inline-block;letter-spacing:.03em;font-weight:600}
 
-/* ===== HERO SECTION ===== */
-.hero {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 80px 60px;
-    flex-wrap: wrap;
+footer{text-align:center;padding:32px;color:#94a3b8;font-size:.82rem;border-top:1px solid rgba(59,130,246,0.07);background:#fff}
+footer span{color:#3b82f6;font-weight:600}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:760px){
+  nav{padding:16px 20px}
+  .nav-links a{padding:6px 10px;font-size:.82rem}
+  h1{font-size:2.4rem;letter-spacing:-1.5px}
+  .hero{padding:70px 20px 50px}
+  .stats{flex-wrap:wrap}.stat{min-width:50%}
+  .card-grid,.pgrid{grid-template-columns:1fr}
+  .features,.polls{padding:60px 20px}
 }
-
-.hero-text {
-    max-width: 500px;
-}
-
-.hero h1 {
-    font-size: 3.2rem;
-    background: linear-gradient(90deg, #00f5ff, #ff00ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.hero p {
-    margin-top: 20px;
-    color: #aaa;
-}
-
-/* ===== BUTTON ===== */
-.btn {
-    display: inline-block;
-    margin-top: 30px;
-    padding: 15px 45px;
-    background: linear-gradient(90deg, #00f5ff, #ff00ff);
-    color: black;
-    border-radius: 40px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.btn:hover {
-    transform: scale(1.08);
-}
-
-/* ===== CARD SECTION ===== */
-.cards {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    padding: 40px;
-    flex-wrap: wrap;
-}
-
-.card {
-    width: 250px;
-    padding: 30px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(15px);
-    text-align: center;
-    transition: 0.3s;
-}
-
-.card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 0 25px rgba(0,255,255,0.3);
-}
-
-.card h3 {
-    color: #00f5ff;
-}
-
-/* ===== FOOTER ===== */
-footer {
-    text-align: center;
-    padding: 20px;
-    color: #888;
-    font-size: 0.9rem;
-}
-
 </style>
 </head>
-
 <body>
 
-<!-- NAVBAR -->
+<canvas id="cloudCanvas"></canvas>
+
+<div class="page">
 <nav>
-    <h2>AQI Shield</h2>
-    <div>
-        <a href="/">Home</a>
-        <a href="/predict">Predict</a>
-        <a href="/datasets">Datasets</a>
-        <a href="/visualize">Visualize</a>
-        <a href="/about">About</a>
-    </div>
+  <div class="logo">AQI<span>Shield</span></div>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/predict">Predict</a>
+    <a href="/datasets">Datasets</a>
+    <a href="/visualize">Visualize</a>
+    <a href="/about">About</a>
+  </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
-    <div class="hero-text">
-        <h1>Air Quality Analyzer</h1>
-        <p>Monitor pollution levels and stay safe with smart AQI prediction.</p>
-        <a href="/predict" class="btn">Check AQI</a>
+  <div class="badge"><span class="dot"></span>&nbsp;Real-time Air Intelligence</div>
+  <h1>Monitor the air<br><em>you breathe</em></h1>
+  <p class="hero-sub">Smart AQI prediction using PM2.5, PM10, NO₂ &amp; SO₂ — stay informed, breathe easy.</p>
+  <div class="hero-cta">
+    <a href="/predict" class="btn-p">Check AQI Now</a>
+    <a href="/visualize" class="btn-s">View Trends →</a>
+  </div>
+
+  <div class="gauge-wrap">
+    <div class="gauge-outer">
+      <svg width="260" height="148" viewBox="0 0 260 148">
+        <defs>
+          <linearGradient id="ag" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1d4ed8"/>
+            <stop offset="100%" stop-color="#60a5fa"/>
+          </linearGradient>
+        </defs>
+        <path d="M 20 130 A 110 110 0 0 1 240 130" fill="none" stroke="#e0eaff" stroke-width="12" stroke-linecap="round"/>
+        <path d="M 20 130 A 110 110 0 0 1 75 28"  fill="none" stroke="rgba(34,197,94,0.3)"   stroke-width="6" stroke-linecap="round"/>
+        <path d="M 75 28  A 110 110 0 0 1 130 18" fill="none" stroke="rgba(234,179,8,0.35)"  stroke-width="6" stroke-linecap="round"/>
+        <path d="M 130 18 A 110 110 0 0 1 185 28" fill="none" stroke="rgba(249,115,22,0.35)" stroke-width="6" stroke-linecap="round"/>
+        <path d="M 185 28 A 110 110 0 0 1 240 130" fill="none" stroke="rgba(239,68,68,0.35)" stroke-width="6" stroke-linecap="round"/>
+        <path id="arcP" d="M 20 130 A 110 110 0 0 1 240 130"
+          fill="none" stroke="url(#ag)" stroke-width="10" stroke-linecap="round"
+          stroke-dasharray="345" stroke-dashoffset="295"
+          style="transition:stroke-dashoffset 2.2s cubic-bezier(.4,0,.2,1)"/>
+        <g stroke="rgba(59,130,246,0.2)" stroke-width="1.5">
+          <line x1="130" y1="10" x2="130" y2="22"/>
+          <line x1="46"  y1="40" x2="54"  y2="50"/>
+          <line x1="214" y1="40" x2="206" y2="50"/>
+        </g>
+        <text x="10"  y="148" fill="#93c5fd" font-size="9.5" font-family="DM Sans,sans-serif">0</text>
+        <text x="130" y="10"  fill="#93c5fd" font-size="9.5" font-family="DM Sans,sans-serif" text-anchor="middle">250</text>
+        <text x="250" y="148" fill="#93c5fd" font-size="9.5" font-family="DM Sans,sans-serif" text-anchor="end">500</text>
+      </svg>
+      <div class="gauge-val" id="gv">0</div>
+      <div class="gauge-tag">GOOD — LIVE AQI</div>
+      <div class="gauge-shadow"></div>
     </div>
+  </div>
 </section>
 
-<!-- FEATURES -->
-<section class="cards">
+<div class="stats">
+  <div class="stat"><div class="s-num">4</div><div class="s-lbl">Pollutants Tracked</div></div>
+  <div class="stat"><div class="s-num">6</div><div class="s-lbl">AQI Categories</div></div>
+  <div class="stat"><div class="s-num">ML</div><div class="s-lbl">Powered Engine</div></div>
+  <div class="stat"><div class="s-num">Live</div><div class="s-lbl">Visualization</div></div>
+</div>
 
-    <div class="card">
-        <h3>Prediction</h3>
-        <p>Instant AQI calculation using pollution inputs.</p>
+<section class="features">
+  <div class="sec-eye">What we offer</div>
+  <div class="sec-title">Everything you need to stay safe</div>
+  <div class="card-grid">
+    <div class="fcard" style="animation-delay:.1s">
+      <div class="ficon">🎯</div>
+      <h3>AQI Prediction</h3>
+      <p>Enter pollutant values and get instant color-coded AQI with a health advisory message.</p>
+      <a href="/predict">Predict now →</a>
     </div>
-
-    <div class="card">
-        <h3>Datasets</h3>
-        <p>Explore pollution datasets in tabular form.</p>
+    <div class="fcard" style="animation-delay:.2s">
+      <div class="ficon">📊</div>
+      <h3>Dataset Explorer</h3>
+      <p>Browse historical pollution records in an interactive table with filter support.</p>
+      <a href="/datasets">Explore data →</a>
     </div>
-
-    <div class="card">
-        <h3>Visualization</h3>
-        <p>Analyze trends using charts and graphs.</p>
+    <div class="fcard" style="animation-delay:.3s">
+      <div class="ficon">📈</div>
+      <h3>Visual Analytics</h3>
+      <p>Trend charts built with Matplotlib &amp; Seaborn reveal hidden pollution patterns.</p>
+      <a href="/visualize">View charts →</a>
     </div>
-
+  </div>
 </section>
 
-<!-- FOOTER -->
-<footer>
-    © 2026 AQI Shield | Built by You 🚀
-</footer>
+<section class="polls">
+  <div class="sec-eye" style="text-align:center">Measured pollutants</div>
+  <div class="sec-title" style="text-align:center">Four critical indicators</div>
+  <div class="pgrid">
+    <div class="pcard">
+      <div class="pf">PM<sub style="font-size:.65em">2.5</sub></div>
+      <div class="pn">Fine Particulate Matter</div>
+      <div class="pr">0–500 µg/m³</div>
+    </div>
+    <div class="pcard">
+      <div class="pf">PM<sub style="font-size:.65em">10</sub></div>
+      <div class="pn">Coarse Particulate Matter</div>
+      <div class="pr">0–1000 µg/m³</div>
+    </div>
+    <div class="pcard">
+      <div class="pf">NO<sub style="font-size:.65em">2</sub></div>
+      <div class="pn">Nitrogen Dioxide</div>
+      <div class="pr">0–300 ppb</div>
+    </div>
+    <div class="pcard">
+      <div class="pf">SO<sub style="font-size:.65em">2</sub></div>
+      <div class="pn">Sulphur Dioxide</div>
+      <div class="pr">0–300 ppb</div>
+    </div>
+  </div>
+</section>
 
+<footer>© 2026 <span>AQI Shield</span> · Built with ❤️ for environment safety 🚀</footer>
+</div>
+
+<script>
+/* ── ANIMATED BLUE CLOUDS on WHITE BG ── */
+const canvas = document.getElementById('cloudCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Cloud {
+  constructor(layer) { this.layer = layer; this.reset(true); }
+  reset(init) {
+    const l = this.layer;
+    this.y = H * (0.04 + l * 0.14 + Math.random() * 0.12);
+    this.x = init ? Math.random() * W * 1.4 - W * 0.2 : -W * 0.4;
+    this.w = 180 + l * 100 + Math.random() * 160;
+    this.h = this.w * (0.25 + Math.random() * 0.12);
+    this.speed = 0.25 + l * 0.2 + Math.random() * 0.2;
+    this.alpha = 0.055 + l * 0.03 + Math.random() * 0.025;
+    this.puffs = [];
+    const n = 5 + Math.floor(Math.random() * 5);
+    for (let i = 0; i < n; i++) {
+      this.puffs.push({
+        ox: (i / (n - 1) - 0.5) * this.w * 0.88,
+        oy: (Math.random() - 0.5) * this.h * 0.5,
+        r: this.h * (0.4 + Math.random() * 0.32)
+      });
+    }
+  }
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    this.puffs.forEach(p => {
+      const grad = ctx.createRadialGradient(p.ox, p.oy - p.r * 0.12, p.r * 0.05, p.ox, p.oy, p.r);
+      const a = this.alpha;
+      grad.addColorStop(0,    `rgba(96,165,250,${a * 2.2})`);
+      grad.addColorStop(0.35, `rgba(147,197,253,${a * 1.4})`);
+      grad.addColorStop(0.7,  `rgba(191,219,254,${a * 0.7})`);
+      grad.addColorStop(1,    `rgba(219,234,254,0)`);
+      ctx.beginPath();
+      ctx.arc(p.ox, p.oy, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+  update() { this.x += this.speed; if (this.x > W * 1.4) this.reset(false); }
+}
+
+const clouds = [];
+for (let l = 0; l < 3; l++) {
+  const n = l === 0 ? 5 : l === 1 ? 4 : 3;
+  for (let i = 0; i < n; i++) clouds.push(new Cloud(l));
+}
+
+function loop() {
+  ctx.clearRect(0, 0, W, H);
+  clouds.sort((a, b) => a.layer - b.layer);
+  clouds.forEach(c => { c.update(); c.draw(); });
+  requestAnimationFrame(loop);
+}
+loop();
+
+/* ── GAUGE ── */
+setTimeout(() => { document.getElementById('arcP').style.strokeDashoffset = '245'; }, 400);
+let t = 72, cur = 0;
+const tick = () => {
+  cur = Math.min(cur + 1, t);
+  document.getElementById('gv').textContent = cur;
+  if (cur < t) requestAnimationFrame(tick);
+};
+setTimeout(tick, 600);
+</script>
 </body>
 </html>
