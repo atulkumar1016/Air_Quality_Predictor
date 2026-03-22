@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Visualize</title>
+<title>Visualization</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
 <style>
@@ -11,14 +11,48 @@ body {
     background: radial-gradient(circle at top, #0a192f, #000);
     color: white;
 }
+
+/* NAVBAR SAME */
 nav {
     display: flex;
     justify-content: space-between;
     padding: 20px 60px;
     background: rgba(255,255,255,0.05);
 }
+nav h2 { color:#00f5ff; }
 nav a { color:white; margin-left:20px; text-decoration:none; }
-h1 { text-align:center; margin-top:100px; }
+nav a:hover { color:#00f5ff; }
+
+/* SECTION */
+.section {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.section h1 {
+    color: #00f5ff;
+    margin-bottom: 30px;
+}
+
+/* IMAGE CARDS */
+.img-box {
+    margin: 30px auto;
+    max-width: 800px;
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+}
+
+.img-box:hover {
+    transform: scale(1.03);
+}
+
+img {
+    width: 100%;
+    border-radius: 15px;
+}
 </style>
 </head>
 
@@ -35,7 +69,25 @@ h1 { text-align:center; margin-top:100px; }
     </div>
 </nav>
 
-<h1>Visualization Page 📊</h1>
+<div class="section">
+    <h1>Pollution Data Visualization 📊</h1>
+
+    <div class="img-box">
+        <h3>Bar Plot</h3>
+        <img src="{{ url_for('static', filename='barplot.png') }}">
+    </div>
+
+    <div class="img-box">
+        <h3>Distribution Plot</h3>
+        <img src="{{ url_for('static', filename='distribution.png') }}">
+    </div>
+
+    <div class="img-box">
+        <h3>Heatmap</h3>
+        <img src="{{ url_for('static', filename='heatmap.png') }}">
+    </div>
+
+</div>
 
 </body>
 </html>
