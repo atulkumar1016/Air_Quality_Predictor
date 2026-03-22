@@ -1,201 +1,288 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>AQI Predictor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-    body { 
-        margin: 0;
-        padding: 0;
-        font-family: 'Poppins', sans-serif;
-        background: radial-gradient(circle at top, #09121a, #000000);
-        color: white;
-        overflow-x: hidden;
-        text-align: center;
-        padding: 40px;
-    }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;min-height:100vh;overflow-x:hidden;font-family:'DM Sans',sans-serif}
+body{background:#ffffff;color:#1a2744}
 
-    /* Glow Grid Background Animation */
-    body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background: url("https://www.transparenttextures.com/patterns/cubes.png");
-        opacity: 0.08;
-        animation: fade 5s linear infinite alternate;
-        pointer-events: none;
-    }
-    @keyframes fade {
-        0% {opacity: .03;}
-        100% {opacity: .10;}
-    }
+#cloudCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 
-    .box {
-        margin: auto;
-        max-width: 650px;
-        background: rgba(255,255,255,0.06);
-        padding: 50px;
-        border-radius: 30px;
-        backdrop-filter: blur(18px);
-        border: 1px solid rgba(255,255,255,0.15);
-        box-shadow: 0 0 40px rgba(0,255,255,0.15);
-        animation: slide 0.8s ease;
-    }
+.page{position:relative;z-index:1;min-height:100vh;padding-bottom:60px}
 
-    @keyframes slide {
-        from { transform: translateY(70px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-    }
+/* NAVBAR */
+nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 60px;
+  background:rgba(255,255,255,0.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(59,130,246,0.12);
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 1px 24px rgba(59,130,246,0.06);
+}
+.logo{
+  font-family:'Syne',sans-serif;font-size:1.55rem;font-weight:800;
+  color:#1e40af;letter-spacing:-0.5px;
+}
+.logo span{color:#60a5fa}
+.nav-links{display:flex;gap:4px}
+.nav-links a{
+  color:#64748b;text-decoration:none;
+  padding:8px 16px;border-radius:10px;font-size:.9rem;font-weight:500;
+  transition:all .22s;
+}
+.nav-links a:hover{color:#1e40af;background:rgba(59,130,246,0.07)}
 
-    h1 {
-        font-size: 3rem;
-        margin-bottom: 30px;
-        background: linear-gradient(90deg, #00f5ff, #ff00ff);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 20px rgba(0,245,255,0.4);
-    }
+/* PAGE HEADER */
+.page-header{
+  text-align:center;padding:60px 40px 20px;
+}
+.page-header h1{
+  font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;
+  letter-spacing:-2px;color:#0f172a;
+  animation:fadeUp .8s ease both;
+}
+.page-header h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,#1d4ed8,#3b82f6,#60a5fa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.page-header p{
+  margin-top:12px;color:#64748b;font-size:1rem;
+  animation:fadeUp .9s ease .1s both;
+}
 
-    .input-group {
-        margin: 25px 0;
-        text-align: left;
-        background: rgba(255,255,255,0.07);
-        padding: 18px 20px;
-        border-radius: 18px;
-        border-left: 4px solid #00f5ff;
-        transition: 0.3s;
-    }
+/* BOX / FORM */
+.box{
+  margin:40px auto;max-width:620px;
+  background:rgba(255,255,255,0.92);
+  padding:48px 44px;
+  border-radius:28px;
+  border:1px solid rgba(59,130,246,0.14);
+  box-shadow:0 8px 48px rgba(59,130,246,0.1),0 2px 12px rgba(0,0,0,0.04);
+  animation:fadeUp 1s ease .2s both;
+}
 
-    .input-group:hover {
-        transform: translateX(8px);
-        background: rgba(255,255,255,0.12);
-        border-left: 4px solid #ff00ff;
-    }
+/* INPUT GROUP */
+.input-group{
+  margin:20px 0;text-align:left;
+  background:rgba(239,246,255,0.6);
+  padding:18px 20px;
+  border-radius:16px;
+  border-left:4px solid #3b82f6;
+  transition:.3s;
+}
+.input-group:hover{
+  transform:translateX(6px);
+  background:rgba(219,234,254,0.6);
+  border-left-color:#1d4ed8;
+}
+.input-group label{
+  font-size:1rem;font-weight:600;color:#1e40af;
+}
+.range{
+  float:right;font-size:.8rem;color:#60a5fa;font-weight:500;
+}
+input[type=number]{
+  width:100%;padding:13px 16px;margin-top:10px;
+  border-radius:10px;
+  background:#fff;
+  border:1.5px solid rgba(59,130,246,0.2);
+  color:#0f172a;font-size:1rem;
+  font-family:'DM Sans',sans-serif;
+  transition:.2s;outline:none;
+}
+input[type=number]:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,0.12)}
+input[type=number]::placeholder{color:#93c5fd}
 
-    .input-group label {
-        font-size: 1.25rem;
-        font-weight: 600;
-    }
+/* BUTTON */
+button{
+  margin-top:28px;width:100%;
+  padding:16px;
+  background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+  color:#fff;border:none;
+  border-radius:14px;
+  font-size:1.05rem;font-weight:700;
+  cursor:pointer;transition:.28s;
+  font-family:'DM Sans',sans-serif;
+  box-shadow:0 4px 24px rgba(59,130,246,0.35);
+  letter-spacing:.02em;
+}
+button:hover{transform:translateY(-3px);box-shadow:0 8px 40px rgba(59,130,246,0.5)}
+button:active{transform:translateY(0)}
 
-    .range {
-        float: right;
-        font-size: 0.85rem;
-        color: #00f5ff;
-    }
+/* ERROR */
+.error-msg{
+  margin-top:16px;padding:12px 18px;
+  background:rgba(254,226,226,0.8);
+  border:1px solid rgba(239,68,68,0.25);
+  border-radius:10px;color:#dc2626;font-size:.9rem;
+}
 
-    input {
-        width: 100%;
-        padding: 16px;
-        margin-top: 12px;
-        border-radius: 12px;
-        background: rgba(255,255,255,0.14);
-        border: none;
-        color: white;
-        font-size: 1.1rem;
-    }
+/* RESULT */
+.result{
+  margin-top:36px;padding:32px;
+  border-radius:22px;
+  font-size:1rem;
+  animation:pop .5s cubic-bezier(.34,1.56,.64,1);
+  border:2px solid;text-align:center;
+}
+@keyframes pop{from{transform:scale(0.6);opacity:0}to{transform:scale(1);opacity:1}}
 
-    input::placeholder {
-        color: #aceeff;
-    }
+.result h2{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;margin-bottom:8px}
+.result h3{font-size:1.1rem;font-weight:600;margin-bottom:12px;opacity:.85}
+.result p{font-size:.95rem;line-height:1.6;opacity:.8}
 
-    button {
-        margin-top: 25px;
-        padding: 18px 60px;
-        background: linear-gradient(90deg, #00f5ff, #ff00ff);
-        color: black;
-        border: none;
-        border-radius: 50px;
-        font-size: 1.4rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.3s;
-        box-shadow: 0 0 20px rgba(0,245,255,0.4);
-    }
+.good              {border-color:#22c55e;background:rgba(220,252,231,0.85);color:#14532d}
+.moderate          {border-color:#eab308;background:rgba(254,249,195,0.85);color:#713f12}
+.unhealthy-sensitive{border-color:#f97316;background:rgba(255,237,213,0.85);color:#7c2d12}
+.unhealthy         {border-color:#ef4444;background:rgba(254,226,226,0.85);color:#7f1d1d}
+.very-unhealthy    {border-color:#a855f7;background:rgba(243,232,255,0.85);color:#4a1d96}
+.hazardous         {border-color:#9f1239;background:rgba(255,228,230,0.85);color:#4c0519}
 
-    button:hover {
-        transform: translateY(-8px) scale(1.05);
-        box-shadow: 0 0 35px rgba(255,0,255,0.6);
-    }
+/* BACK LINK */
+.back-link{
+  display:block;text-align:center;margin-top:28px;
+  color:#3b82f6;font-size:.9rem;font-weight:500;text-decoration:none;
+  transition:.2s;
+}
+.back-link:hover{color:#1d4ed8}
 
-    .result {
-        margin-top: 45px;
-        padding: 35px;
-        border-radius: 25px;
-        font-size: 2rem;
-        animation: pop 0.5s;
-        border: 4px solid;
-    }
+footer{text-align:center;padding:32px;color:#94a3b8;font-size:.82rem;border-top:1px solid rgba(59,130,246,0.07);background:#fff;margin-top:40px}
+footer span{color:#3b82f6;font-weight:600}
 
-    @keyframes pop {
-        from { transform: scale(0.4); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-    }
-
-    .good { border-color: #00e400; background: #00330088; }
-    .moderate { border-color: yellow; background: #33330088; }
-    .unhealthy-sensitive { border-color: orange; background: #33220088; }
-    .unhealthy { border-color: red; background: #33000088; }
-    .very-unhealthy { border-color: purple; background: #22002288; }
-    .hazardous { border-color: maroon; background: #330011cc; }
-
-    a {
-        color:#00f5ff; 
-        font-size:1.3rem; 
-        text-decoration:none;
-    }
-
-    a:hover {
-        text-shadow: 0 0 10px cyan;
-    }
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:680px){
+  nav{padding:16px 20px}.nav-links a{padding:6px 10px;font-size:.82rem}
+  .box{margin:24px 16px;padding:28px 22px}
+  .page-header h1{font-size:2.2rem}
+}
 </style>
-
 </head>
 <body>
 
-    <div class="box">
-        <h1>AQI Predictor</h1>
+<canvas id="cloudCanvas"></canvas>
 
-        <form method="post">
+<div class="page">
 
-            <div class="input-group">
-                <label>PM2.5</label><span class="range">0 - 500</span>
-                <input type="number" step="0.01" name="PM2_5" placeholder="Enter PM2.5" required>
-            </div>
+<nav>
+  <div class="logo">AQI<span>Shield</span></div>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/predict">Predict</a>
+    <a href="/datasets">Datasets</a>
+    <a href="/visualize">Visualize</a>
+    <a href="/about">About</a>
+  </div>
+</nav>
 
-            <div class="input-group">
-                <label>PM10</label><span class="range">0 - 1000</span>
-                <input type="number" step="0.01" name="PM10" placeholder="Enter PM10" required>
-            </div>
+<div class="page-header">
+  <h1>AQI <em>Predictor</em></h1>
+  <p>Enter pollutant concentrations to calculate your Air Quality Index</p>
+</div>
 
-            <div class="input-group">
-                <label>NO₂</label><span class="range">0 - 300</span>
-                <input type="number" step="0.01" name="NO2" placeholder="Enter NO₂" required>
-            </div>
+<div class="box">
+  <form method="post">
 
-            <div class="input-group">
-                <label>SO₂</label><span class="range">0 - 300</span>
-                <input type="number" step="0.01" name="SO2" placeholder="Enter SO₂" required>
-            </div>
-
-            <button type="submit">Predict AQI</button>
-        </form>
-
-        {% if error %}
-            <p style="color:red; margin-top:20px;">{{ error }}</p>
-        {% endif %}
-
-        {% if show %}
-            <div class="result {{ color }}">
-                <h2>{{ aqi }}</h2>
-                <h3>{{ category }}</h3>
-                <p style="font-size:1.4rem;">{{ message }}</p>
-            </div>
-        {% endif %}
-
-        <br><br>
-        <a href="/">← Back to Home</a>
+    <div class="input-group">
+      <label>PM2.5</label><span class="range">0 – 500</span>
+      <input type="number" step="0.01" name="PM2_5" placeholder="Enter PM2.5 value" required>
     </div>
 
+    <div class="input-group">
+      <label>PM10</label><span class="range">0 – 1000</span>
+      <input type="number" step="0.01" name="PM10" placeholder="Enter PM10 value" required>
+    </div>
+
+    <div class="input-group">
+      <label>NO₂</label><span class="range">0 – 300</span>
+      <input type="number" step="0.01" name="NO2" placeholder="Enter NO₂ value" required>
+    </div>
+
+    <div class="input-group">
+      <label>SO₂</label><span class="range">0 – 300</span>
+      <input type="number" step="0.01" name="SO2" placeholder="Enter SO₂ value" required>
+    </div>
+
+    <button type="submit">Predict AQI →</button>
+  </form>
+
+  {% if error %}
+    <div class="error-msg">⚠️ {{ error }}</div>
+  {% endif %}
+
+  {% if show %}
+    <div class="result {{ color }}">
+      <h2>{{ aqi }}</h2>
+      <h3>{{ category }}</h3>
+      <p>{{ message }}</p>
+    </div>
+  {% endif %}
+
+  <a href="/" class="back-link">← Back to Home</a>
+</div>
+
+<footer>© 2026 <span>AQI Shield</span> · Built with ❤️ for environment safety 🚀</footer>
+</div>
+
+<script>
+const canvas = document.getElementById('cloudCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+
+class Cloud {
+  constructor(layer) { this.layer = layer; this.reset(true); }
+  reset(init) {
+    const l = this.layer;
+    this.y = H * (0.04 + l * 0.14 + Math.random() * 0.12);
+    this.x = init ? Math.random() * W * 1.4 - W * 0.2 : -W * 0.4;
+    this.w = 180 + l * 100 + Math.random() * 160;
+    this.h = this.w * (0.25 + Math.random() * 0.12);
+    this.speed = 0.25 + l * 0.2 + Math.random() * 0.2;
+    this.alpha = 0.055 + l * 0.03 + Math.random() * 0.025;
+    this.puffs = [];
+    const n = 5 + Math.floor(Math.random() * 5);
+    for (let i = 0; i < n; i++) {
+      this.puffs.push({
+        ox: (i / (n - 1) - 0.5) * this.w * 0.88,
+        oy: (Math.random() - 0.5) * this.h * 0.5,
+        r: this.h * (0.4 + Math.random() * 0.32)
+      });
+    }
+  }
+  draw() {
+    ctx.save(); ctx.translate(this.x, this.y);
+    this.puffs.forEach(p => {
+      const grad = ctx.createRadialGradient(p.ox, p.oy - p.r * 0.12, p.r * 0.05, p.ox, p.oy, p.r);
+      const a = this.alpha;
+      grad.addColorStop(0,    `rgba(96,165,250,${a * 2.2})`);
+      grad.addColorStop(0.35, `rgba(147,197,253,${a * 1.4})`);
+      grad.addColorStop(0.7,  `rgba(191,219,254,${a * 0.7})`);
+      grad.addColorStop(1,    `rgba(219,234,254,0)`);
+      ctx.beginPath(); ctx.arc(p.ox, p.oy, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = grad; ctx.fill();
+    });
+    ctx.restore();
+  }
+  update() { this.x += this.speed; if (this.x > W * 1.4) this.reset(false); }
+}
+const clouds = [];
+for (let l = 0; l < 3; l++) {
+  const n = l === 0 ? 5 : l === 1 ? 4 : 3;
+  for (let i = 0; i < n; i++) clouds.push(new Cloud(l));
+}
+function loop() {
+  ctx.clearRect(0, 0, W, H);
+  clouds.sort((a, b) => a.layer - b.layer);
+  clouds.forEach(c => { c.update(); c.draw(); });
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
 </body>
 </html>
