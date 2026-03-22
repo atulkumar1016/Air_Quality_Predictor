@@ -13,4 +13,4 @@ The project showcases a complete **end-to-end pipeline** — from data processin
 - ✔️ Fully deployment-ready on Render
 
 ## 🚀 Live Demo
-[https://air-quality-predictor-ulev.onrender.com](https://air-quality-predictor-ulev.onrender.com)**
+[https://air-quality-predictor-ulev.onrender.com](https://air-quality-predictor-ulev.onrender.com)
