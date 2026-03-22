@@ -12,6 +12,10 @@ def home():
 def visualize():
     return render_template('visualize.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 @app.route('/predict', methods=['GET', 'POST'])
 def predict():
     if request.method == 'POST':
@@ -24,17 +28,17 @@ def predict():
             aqi = pm25 * 2.5 + pm10 * 0.8 + no2 * 1.2 + so2 * 1.5
 
             if aqi <= 50:
-                cat, col, msg = "Good", "good", "Hawa saaf hai bhai!"
+                cat, col, msg = "Good", "green", "Hawa saaf hai bhai!"
             elif aqi <= 100:
-                cat, col, msg = "Moderate", "moderate", "Thoda dhyan rakhna"
+                cat, col, msg = "Moderate", "yellow", "Thoda dhyan rakhna"
             elif aqi <= 150:
-                cat, col, msg = "Unhealthy for Sensitive", "unhealthy-sensitive", "Sensitive log bahar mat niklo"
+                cat, col, msg = "Unhealthy for Sensitive", "orange", "Sensitive log bahar mat niklo"
             elif aqi <= 200:
-                cat, col, msg = "Unhealthy", "unhealthy", "Sabko problem ho sakti hai"
+                cat, col, msg = "Unhealthy", "red", "Sabko problem ho sakti hai"
             elif aqi <= 300:
-                cat, col, msg = "Very Unhealthy", "very-unhealthy", "Bahut kharab hai!"
+                cat, col, msg = "Very Unhealthy", "purple", "Bahut kharab hai!"
             else:
-                cat, col, msg = "Hazardous", "hazardous", "Ghar se mat nikalna!"
+                cat, col, msg = "Hazardous", "maroon", "Ghar se mat nikalna!"
 
             return render_template(
                 'predict.html',
@@ -57,11 +61,6 @@ def datasets():
     df = pd.read_csv(path)
     table_html = df.to_html(classes='table', index=False)
     return render_template('datasets.html', table=table_html)
-
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
 
 
 if __name__ == '__main__':
