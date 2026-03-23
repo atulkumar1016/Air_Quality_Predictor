@@ -3,372 +3,641 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AQI Shield</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<title>AQI Shield — Breathe Smarter</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;min-height:100vh;overflow-x:hidden;font-family:'DM Sans',sans-serif}
-body{background:#ffffff;color:#1a2744}
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap');
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --white:#fff;--bg:#f7faf7;--bg2:#eef5ee;
+  --ink:#141f14;--ink2:#2e3d2e;--muted:#6b7f6b;
+  --line:#ddeadd;--G:#2d7a3a;--G2:#3a9e4a;
+  --G3:#e8f5e9;--G4:#c8e6c9;--Gdk:#1b5e20;
+}
+html,body{width:100%;min-height:100vh;overflow-x:hidden;
+  background:var(--white);color:var(--ink);
+  font-family:'Nunito',Calibri,'Segoe UI',sans-serif;
+  -webkit-font-smoothing:antialiased}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.page{position:relative;z-index:1}
 
-#cloudCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 60px;height:62px;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;
+  font-size:1.3rem;font-weight:800;color:var(--ink)}
+.logo-mark{width:32px;height:32px;border-radius:9px;background:var(--G);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:17px;height:17px;fill:none;stroke:#fff;
+  stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.logo span{color:var(--G)}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{font-size:.875rem;font-weight:500;color:var(--muted);
+  text-decoration:none;padding:7px 14px;border-radius:8px;transition:all .18s}
+.nav-links a:hover{color:var(--ink);background:var(--G3)}
+.nav-links a.active{color:var(--G);background:var(--G3);font-weight:700}
+.nav-links .cta{margin-left:8px;background:var(--G);color:#fff!important;
+  padding:9px 22px;border-radius:9px;font-weight:700;font-size:.855rem;
+  box-shadow:0 2px 14px rgba(45,122,58,.28);transition:all .2s}
+.nav-links .cta:hover{background:var(--Gdk);transform:translateY(-1px);box-shadow:0 4px 22px rgba(45,122,58,.42)}
+/* mobile */
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;border:none;background:none}
+.ham span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px;transition:all .25s}
+.ham.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.ham.open span:nth-child(2){opacity:0}
+.ham.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mob-nav{display:none;position:fixed;top:62px;left:0;right:0;bottom:0;
+  background:rgba(255,255,255,.98);backdrop-filter:blur(20px);
+  z-index:400;flex-direction:column;padding:20px;gap:6px;overflow-y:auto;
+  border-top:1px solid var(--line)}
+.mob-nav.open{display:flex}
+.mob-nav a{font-size:1rem;font-weight:600;color:var(--ink2);
+  text-decoration:none;padding:14px 18px;border-radius:12px;transition:all .18s}
+.mob-nav a:hover{background:var(--G3);color:var(--G)}
+.mob-nav .mob-cta{background:var(--G);color:#fff!important;text-align:center;margin-top:8px;border-radius:12px}
 
-.page{position:relative;z-index:1;min-height:100vh}
-
-/* NAVBAR */
-nav{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:20px 60px;
-  background:rgba(255,255,255,0.88);
-  backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(59,130,246,0.12);
-  position:sticky;top:0;z-index:200;
-  box-shadow:0 1px 24px rgba(59,130,246,0.06);
-}
-.logo{
-  font-family:'Syne',sans-serif;font-size:1.55rem;font-weight:800;
-  color:#1e40af;letter-spacing:-0.5px;
-}
-.logo span{color:#60a5fa}
-.nav-links{display:flex;gap:4px}
-.nav-links a{
-  color:#64748b;text-decoration:none;
-  padding:8px 16px;border-radius:10px;font-size:.9rem;font-weight:500;
-  transition:all .22s;
-}
-.nav-links a:hover{color:#1e40af;background:rgba(59,130,246,0.07)}
-
-/* HERO */
-.hero{text-align:center;padding:120px 40px 90px;position:relative}
-.badge{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(59,130,246,0.08);
-  border:1px solid rgba(59,130,246,0.2);
-  border-radius:999px;padding:7px 22px;
-  font-size:.76rem;color:#2563eb;font-weight:600;
-  letter-spacing:.07em;text-transform:uppercase;
-  margin-bottom:36px;animation:fadeUp .7s ease both;
-}
-.dot{width:7px;height:7px;border-radius:50%;background:#3b82f6;display:inline-block;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.5)}50%{box-shadow:0 0 0 8px rgba(59,130,246,0)}}
-
-h1{
-  font-family:'Syne',sans-serif;font-size:4rem;font-weight:800;
-  line-height:1.08;letter-spacing:-2.5px;color:#0f172a;
-  animation:fadeUp .85s ease .1s both;max-width:680px;margin:0 auto;
-}
-h1 em{
-  font-style:normal;
-  background:linear-gradient(135deg,#1d4ed8,#3b82f6,#60a5fa);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.hero-sub{
-  margin:22px auto 0;color:#64748b;
-  font-size:1.08rem;max-width:480px;line-height:1.75;font-weight:400;
-  animation:fadeUp .95s ease .2s both;
-}
-.hero-cta{
-  margin-top:42px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
-  animation:fadeUp 1s ease .32s both;
-}
-.btn-p{
-  padding:14px 44px;
-  background:linear-gradient(135deg,#1d4ed8,#3b82f6);
-  color:#fff;border:none;border-radius:14px;
-  font-size:.97rem;font-weight:600;cursor:pointer;
+/* ── HERO ── */
+.hero{display:flex;flex-direction:column;align-items:center;
+  text-align:center;padding:90px 40px 60px;min-height:84vh}
+.pill{display:inline-flex;align-items:center;gap:8px;
+  background:var(--G3);border:1px solid var(--G4);border-radius:999px;
+  padding:6px 20px;font-size:.77rem;font-weight:700;color:var(--G);
+  letter-spacing:.07em;text-transform:uppercase;margin-bottom:36px;
+  animation:up .8s cubic-bezier(.22,1,.36,1) both}
+.ldot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:lpulse 2.2s infinite}
+@keyframes lpulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+.hero-h1{font-size:clamp(2.6rem,6vw,5rem);font-weight:800;line-height:1.06;
+  color:var(--ink);letter-spacing:-2px;margin-bottom:20px;
+  animation:up .9s cubic-bezier(.22,1,.36,1) .08s both}
+.hero-h1 .gr{color:var(--G)}
+.hero-p{font-size:1.05rem;color:var(--muted);max-width:430px;
+  line-height:1.85;margin-bottom:44px;
+  animation:up .9s cubic-bezier(.22,1,.36,1) .18s both}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+  margin-bottom:52px;animation:up .9s cubic-bezier(.22,1,.36,1) .28s both}
+.btn-solid{padding:13px 40px;border-radius:10px;background:var(--G);color:#fff;
+  font-size:.93rem;font-weight:700;text-decoration:none;display:inline-block;
+  box-shadow:0 4px 24px rgba(45,122,58,.32);transition:all .22s}
+.btn-solid:hover{background:var(--Gdk);transform:translateY(-2px);box-shadow:0 8px 32px rgba(45,122,58,.42)}
+.btn-outline{padding:13px 36px;border-radius:10px;background:var(--white);
+  color:var(--ink2);font-size:.93rem;font-weight:500;
   text-decoration:none;display:inline-block;
-  box-shadow:0 4px 30px rgba(59,130,246,0.35);
-  transition:all .28s;
-}
-.btn-p:hover{transform:translateY(-3px);box-shadow:0 8px 48px rgba(59,130,246,0.5)}
-.btn-s{
-  padding:14px 36px;
-  background:#fff;color:#2563eb;
-  border:1.5px solid rgba(59,130,246,0.3);
-  border-radius:14px;font-size:.97rem;font-weight:500;
-  text-decoration:none;display:inline-block;transition:all .25s;
-}
-.btn-s:hover{background:rgba(59,130,246,0.05);border-color:rgba(59,130,246,0.55)}
+  border:1.5px solid var(--line);transition:all .2s}
+.btn-outline:hover{border-color:var(--G4);background:var(--G3)}
 
-/* GAUGE */
-.gauge-wrap{margin-top:64px;animation:fadeUp 1s ease .48s both}
-.gauge-outer{width:260px;height:148px;margin:0 auto;position:relative}
-.gauge-shadow{
-  position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
-  width:200px;height:40px;
-  background:radial-gradient(ellipse,rgba(59,130,246,0.14) 0%,transparent 70%);
-}
-.gauge-val{
-  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
-  font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;color:#1e40af;
-  line-height:1;white-space:nowrap;
-}
-.gauge-tag{
-  position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);
-  font-size:.7rem;letter-spacing:.1em;color:#60a5fa;white-space:nowrap;font-weight:600;
-}
+/* ── HERO GREEN CARD ── */
+.hero-aqi-card{
+  display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  background:linear-gradient(135deg,var(--G) 0%,var(--G2) 60%,#1a5e26 100%);
+  border-radius:24px;padding:28px 36px;
+  width:min(820px,92vw);margin-bottom:48px;
+  box-shadow:0 12px 48px rgba(45,122,58,.28);
+  animation:up .9s cubic-bezier(.22,1,.36,1) .36s both;
+  position:relative;overflow:hidden;gap:0}
+.hero-aqi-card::before{content:'';position:absolute;top:-60px;right:80px;
+  width:200px;height:200px;border-radius:50%;
+  background:rgba(255,255,255,.04);pointer-events:none}
+.hac-left{display:flex;flex-direction:column;gap:6px;z-index:1}
+.hac-city-row{display:flex;align-items:center;gap:8px}
+.hac-dot{width:9px;height:9px;border-radius:50%;background:#4ade80;animation:lpulse 2s infinite}
+.hac-city{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.65);
+  text-transform:uppercase;letter-spacing:.08em}
+.hac-live{font-size:.6rem;font-weight:800;color:#4ade80;letter-spacing:.12em;
+  animation:blink 1.6s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.hac-num{font-size:4.2rem;font-weight:800;color:#fff;line-height:1;letter-spacing:-3px}
+.hac-badge{display:inline-block;font-size:.7rem;font-weight:800;
+  padding:4px 14px;border-radius:999px;
+  background:rgba(255,255,255,.18);color:#fff;
+  text-transform:uppercase;letter-spacing:.08em;
+  border:1px solid rgba(255,255,255,.25);width:fit-content;transition:all .4s}
+.hac-meta{font-size:.7rem;color:rgba(255,255,255,.45);margin-top:4px;line-height:1.7}
+.hac-right{display:flex;flex-direction:column;align-items:center;gap:4px;z-index:1}
+.hac-ring-svg{width:100px;height:100px}
+.hac-pct{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase}
+.hac-bars{display:flex;flex-direction:column;gap:9px;z-index:1}
+.hac-bar-row{display:flex;align-items:center;gap:9px}
+.hb-label{font-size:.67rem;font-weight:700;color:rgba(255,255,255,.5);min-width:34px;text-align:right}
+.hb-track{flex:1;height:5px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden;min-width:80px}
+.hb-fill{height:100%;border-radius:3px;background:rgba(255,255,255,.85);width:0;
+  transition:width 1.4s cubic-bezier(.22,1,.36,1)}
+.hb-val{font-size:.67rem;font-weight:700;color:rgba(255,255,255,.75);min-width:32px}
 
-/* STATS */
-.stats{
-  display:flex;justify-content:center;
-  border-top:1px solid rgba(59,130,246,0.08);
-  border-bottom:1px solid rgba(59,130,246,0.08);
-  background:rgba(239,246,255,0.7);
-  animation:fadeUp 1s ease .6s both;
-}
-.stat{flex:1;max-width:200px;padding:30px 20px;text-align:center;border-right:1px solid rgba(59,130,246,0.07)}
-.stat:last-child{border-right:none}
-.s-num{font-family:'Syne',sans-serif;font-size:1.85rem;font-weight:800;color:#1d4ed8}
-.s-lbl{font-size:.72rem;color:#94a3b8;margin-top:5px;letter-spacing:.05em;text-transform:uppercase}
+/* ── CITY HORIZONTAL SCROLL ── */
+.city-scroll-wrap{width:100%;max-width:980px;margin-bottom:0;
+  animation:up .9s cubic-bezier(.22,1,.36,1) .44s both}
+.city-scroll-header{display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;padding:0 2px}
+.city-scroll-title{font-size:.72rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.1em}
+.scroll-hint{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:4px}
+.scroll-hint svg{width:14px;height:14px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round}
 
-/* FEATURES */
-.features{padding:96px 48px;text-align:center;background:#fff}
-.sec-eye{font-size:.72rem;letter-spacing:.14em;color:#3b82f6;text-transform:uppercase;font-weight:600;margin-bottom:12px}
-.sec-title{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;letter-spacing:-1px;color:#0f172a;margin-bottom:52px}
-.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:880px;margin:0 auto}
-.fcard{
-  background:#fff;border:1px solid rgba(59,130,246,0.12);
-  border-radius:20px;padding:34px 26px;text-align:left;
-  transition:all .3s;box-shadow:0 2px 16px rgba(59,130,246,0.04);
-  animation:fadeUp 1s ease both;
-}
-.fcard:hover{transform:translateY(-7px);border-color:rgba(59,130,246,0.3);box-shadow:0 16px 48px rgba(59,130,246,0.1)}
-.ficon{
-  width:48px;height:48px;border-radius:14px;
-  background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(59,130,246,0.05));
-  border:1px solid rgba(59,130,246,0.18);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.3rem;margin-bottom:18px;
-}
-.fcard h3{font-family:'Syne',sans-serif;font-size:1.08rem;font-weight:700;color:#0f172a;margin-bottom:9px}
-.fcard p{font-size:.87rem;color:#64748b;line-height:1.7}
-.fcard a{display:inline-flex;align-items:center;gap:5px;margin-top:16px;color:#2563eb;font-size:.82rem;font-weight:600;text-decoration:none;transition:.2s}
-.fcard a:hover{gap:10px}
+/* horizontal scrolling container */
+.city-scroll{
+  display:flex;gap:12px;
+  overflow-x:auto;
+  padding-bottom:10px;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:var(--G4) transparent}
+.city-scroll::-webkit-scrollbar{height:4px}
+.city-scroll::-webkit-scrollbar-track{background:transparent}
+.city-scroll::-webkit-scrollbar-thumb{background:var(--G4);border-radius:2px}
 
-/* POLLUTANTS */
-.polls{padding:80px 48px;background:rgba(239,246,255,0.5);border-top:1px solid rgba(59,130,246,0.07)}
-.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:860px;margin:48px auto 0}
-.pcard{
-  background:#fff;border:1px solid rgba(59,130,246,0.12);
-  border-radius:18px;padding:28px 16px;text-align:center;
-  transition:.3s;box-shadow:0 2px 12px rgba(59,130,246,0.04);
-}
-.pcard:hover{border-color:rgba(59,130,246,0.35);transform:translateY(-4px);box-shadow:0 10px 32px rgba(59,130,246,0.1)}
-.pf{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#1d4ed8}
-.pn{font-size:.72rem;color:#94a3b8;margin-top:6px;line-height:1.5}
-.pr{margin-top:10px;background:rgba(59,130,246,0.08);border-radius:8px;padding:3px 10px;font-size:.67rem;color:#2563eb;display:inline-block;letter-spacing:.03em;font-weight:600}
+.city-card{
+  flex:0 0 128px;
+  background:var(--white);border:1.5px solid var(--line);
+  border-radius:16px;padding:16px 10px 14px;text-align:center;
+  transition:all .35s;cursor:pointer;
+  scroll-snap-align:start;
+  display:flex;flex-direction:column;align-items:center;gap:0;
+  position:relative}
+.city-card.active{border-color:var(--G);box-shadow:0 6px 28px rgba(45,122,58,.15);background:var(--G3)}
+.city-card:hover{transform:translateY(-4px);border-color:var(--G4)}
 
-footer{text-align:center;padding:32px;color:#94a3b8;font-size:.82rem;border-top:1px solid rgba(59,130,246,0.07);background:#fff}
-footer span{color:#3b82f6;font-weight:600}
+/* FILLED donut ring */
+.cr-wrap{position:relative;width:72px;height:72px;margin:0 auto 8px;flex-shrink:0}
+.cr-svg{width:72px;height:72px;transform:rotate(-90deg)}
+.cr-bg{fill:none;stroke:var(--line);stroke-width:8}
+.cr-fill{fill:none;stroke-width:8;stroke-linecap:round;
+  stroke-dasharray:176;stroke-dashoffset:176;
+  transition:stroke-dashoffset 1.4s cubic-bezier(.22,1,.36,1),stroke .4s ease}
+/* inner colored fill circle */
+.cr-inner{fill:transparent;transition:fill .4s}
+.cr-center{position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
+.cr-pct{font-size:.85rem;font-weight:800;line-height:1;color:var(--ink);letter-spacing:-.5px}
+.cr-label{font-size:.52rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:760px){
-  nav{padding:16px 20px}
-  .nav-links a{padding:6px 10px;font-size:.82rem}
-  h1{font-size:2.4rem;letter-spacing:-1.5px}
-  .hero{padding:70px 20px 50px}
-  .stats{flex-wrap:wrap}.stat{min-width:50%}
-  .card-grid,.pgrid{grid-template-columns:1fr}
-  .features,.polls{padding:60px 20px}
+.city-name{font-size:.62rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;
+  line-height:1.3;max-width:108px}
+.city-cat{font-size:.56rem;font-weight:800;margin-top:5px;
+  padding:2px 8px;border-radius:999px;
+  text-transform:uppercase;letter-spacing:.04em;display:inline-block;transition:all .4s}
+
+/* ── STATS ── */
+.stats-row{display:flex;justify-content:center;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--white)}
+.sbox{flex:1;max-width:200px;padding:26px 16px;text-align:center;border-right:1px solid var(--line)}
+.sbox:last-child{border-right:none}
+.sn{font-size:2rem;font-weight:800;color:var(--ink);line-height:1;letter-spacing:-1px}
+.sn .g{color:var(--G);font-size:1.1rem}
+.sl{font-size:.71rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:6px;font-weight:600}
+
+/* ── METER ── */
+.meter-strip{background:var(--ink);padding:36px 60px;
+  display:flex;flex-direction:column;align-items:center;gap:14px}
+.meter-top-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;justify-content:center}
+.meter-aqi-val{font-size:2.4rem;font-weight:800;color:#fff;letter-spacing:-2px;line-height:1}
+.meter-aqi-val small{font-size:.9rem;color:rgba(255,255,255,.3);margin-left:3px}
+.meter-aqi-lbl{font-size:.75rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;padding:4px 14px;border-radius:999px;transition:all .4s}
+.meter-city-badge{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.45);
+  letter-spacing:.08em;text-transform:uppercase;
+  display:flex;align-items:center;gap:7px}
+.city-dot{width:8px;height:8px;border-radius:50%;animation:blink 1.4s infinite}
+.meter-title{font-size:.68rem;color:rgba(255,255,255,.25);
+  text-transform:uppercase;letter-spacing:.1em}
+.meter-track{width:min(740px,86vw);height:14px;background:rgba(255,255,255,.07);
+  border-radius:7px;overflow:hidden;position:relative}
+.meter-fill{height:100%;border-radius:7px;
+  background:linear-gradient(90deg,#22c55e 0%,#86efac 16%,#fbbf24 34%,#f97316 52%,#ef4444 70%,#7c3aed 100%);
+  width:0;transition:width 1.7s cubic-bezier(.22,1,.36,1)}
+.meter-needle{position:absolute;top:-2px;height:18px;width:3px;
+  background:#fff;border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,.8);
+  transition:left 1.7s cubic-bezier(.22,1,.36,1)}
+.meter-labels{display:flex;justify-content:space-between;width:min(740px,86vw)}
+.meter-labels span{font-size:.62rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+
+/* ── SECTIONS ── */
+.sec{padding:80px 60px}
+.sec.alt{background:var(--bg)}
+.inner{max-width:1000px;margin:0 auto}
+.stag{font-size:.71rem;font-weight:700;color:var(--G);text-transform:uppercase;
+  letter-spacing:.12em;margin-bottom:10px;display:block}
+.stitle{font-size:2rem;font-weight:800;color:var(--ink);letter-spacing:-.8px;
+  line-height:1.2;margin-bottom:10px}
+.sdesc{font-size:.95rem;color:var(--muted);max-width:420px;line-height:1.8;margin-bottom:44px}
+
+.qlinks{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.qlink{background:var(--white);border:1.5px solid var(--line);
+  border-radius:18px;padding:28px 22px;
+  display:flex;flex-direction:column;gap:10px;
+  text-decoration:none;transition:all .28s;position:relative;overflow:hidden}
+.qlink::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--G),var(--G2));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .32s cubic-bezier(.22,1,.36,1)}
+.qlink:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(45,122,58,.1);border-color:var(--G4)}
+.qlink:hover::after{transform:scaleX(1)}
+.qico{width:44px;height:44px;border-radius:12px;background:var(--G3);
+  border:1px solid var(--G4);display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.qlink h3{font-size:1.02rem;font-weight:800;color:var(--ink)}
+.qlink p{font-size:.86rem;color:var(--muted);line-height:1.7}
+.qarrow{font-size:.82rem;font-weight:800;color:var(--G);margin-top:2px}
+
+.poll-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.poll-card{background:var(--white);border:1px solid var(--line);
+  border-radius:16px;padding:26px 18px;text-align:center;transition:all .26s}
+.poll-card:hover{border-color:var(--G4);transform:translateY(-4px);box-shadow:0 10px 32px rgba(45,122,58,.09)}
+.psym{font-size:1.6rem;font-weight:800;color:var(--ink);line-height:1}
+.psym sub{font-size:.58em;vertical-align:baseline;position:relative;top:3px}
+.pname{font-size:.71rem;color:var(--muted);margin-top:8px;line-height:1.5}
+.prange{margin-top:10px;display:inline-block;background:var(--G3);color:var(--G);
+  font-size:.66rem;font-weight:700;padding:4px 12px;border-radius:999px;letter-spacing:.04em}
+
+.ref-table{width:100%;border-collapse:collapse;margin-top:32px}
+.ref-table thead th{font-size:.69rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--muted);font-weight:700;padding:0 18px 14px;text-align:left;
+  border-bottom:1px solid var(--line)}
+.ref-table tbody tr{border-bottom:1px solid var(--line)}
+.ref-table tbody tr:last-child{border-bottom:none}
+.ref-table tbody td{padding:14px 18px;font-size:.875rem;color:var(--ink2)}
+.ref-table tbody tr:hover td{background:var(--bg)}
+.cc{display:inline-flex;align-items:center;gap:8px;font-weight:700}
+.cdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);padding:32px 60px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.fb{font-size:1rem;font-weight:800;color:rgba(255,255,255,.8)}
+.fb span{color:#4ade80}
+.fc{font-size:.79rem;color:rgba(255,255,255,.3)}
+
+@keyframes up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ── RESPONSIVE ── */
+@media(max-width:840px){
+  nav{padding:0 16px;height:56px}
+  .nav-links{display:none}
+  .ham{display:flex}
+  .hero{padding:60px 16px 44px;min-height:auto}
+  .hero-aqi-card{grid-template-columns:1fr;padding:22px 18px;gap:18px}
+  .hac-right{display:none}
+  .hac-num{font-size:3.2rem}
+  .hac-bars{display:none}
+  .city-scroll-wrap{max-width:100%}
+  .city-card{flex:0 0 110px}
+  .cr-wrap{width:60px;height:60px}
+  .cr-svg{width:60px;height:60px}
+  .stats-row{flex-wrap:wrap}
+  .sbox{min-width:50%;border-bottom:1px solid var(--line)}
+  .sbox:nth-child(odd){border-right:1px solid var(--line)}
+  .sbox:nth-child(3),.sbox:nth-child(4){border-bottom:none}
+  .meter-strip{padding:26px 16px;gap:10px}
+  .meter-labels{display:none}
+  .sec{padding:56px 16px}
+  .qlinks{grid-template-columns:1fr}
+  .poll-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .ref-table{display:block;overflow-x:auto}
+  .ref-table thead th,.ref-table tbody td{white-space:nowrap;padding:11px 14px}
+  footer{flex-direction:column;text-align:center;padding:24px 16px}
 }
 </style>
 </head>
 <body>
-
-<canvas id="cloudCanvas"></canvas>
-
+<canvas id="sky"></canvas>
 <div class="page">
+
+<!-- NAV -->
 <nav>
-  <div class="logo">AQI<span>Shield</span></div>
+  <a class="logo" href="/">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 12s.5-3 4-3 4 3 4 3-1 3-4 3-4-3-4-3z"/></svg>
+    </div>
+    AQI<span>Shield</span>
+  </a>
   <div class="nav-links">
-    <a href="/">Home</a>
+    <a href="/" class="active">Home</a>
     <a href="/predict">Predict</a>
     <a href="/datasets">Datasets</a>
     <a href="/visualize">Visualize</a>
     <a href="/about">About</a>
+    <a href="/predict" class="cta">Check AQI →</a>
   </div>
+  <button class="ham" id="hamBtn" onclick="toggleMob()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
-
-<section class="hero">
-  <div class="badge"><span class="dot"></span>&nbsp;Real-time Air Intelligence</div>
-  <h1>Monitor the air<br><em>you breathe</em></h1>
-  <p class="hero-sub">Smart AQI prediction using PM2.5, PM10, NO₂ &amp; SO₂ — stay informed, breathe easy.</p>
-  <div class="hero-cta">
-    <a href="/predict" class="btn-p">Check AQI Now</a>
-    <a href="/visualize" class="btn-s">View Trends →</a>
-  </div>
-
-  <div class="gauge-wrap">
-    <div class="gauge-outer">
-      <svg width="260" height="148" viewBox="0 0 260 148">
-        <defs>
-          <linearGradient id="ag" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#1d4ed8"/>
-            <stop offset="100%" stop-color="#60a5fa"/>
-          </linearGradient>
-        </defs>
-        <path d="M 20 130 A 110 110 0 0 1 240 130" fill="none" stroke="#e0eaff" stroke-width="12" stroke-linecap="round"/>
-        <path d="M 20 130 A 110 110 0 0 1 75 28"  fill="none" stroke="rgba(34,197,94,0.3)"   stroke-width="6" stroke-linecap="round"/>
-        <path d="M 75 28  A 110 110 0 0 1 130 18" fill="none" stroke="rgba(234,179,8,0.35)"  stroke-width="6" stroke-linecap="round"/>
-        <path d="M 130 18 A 110 110 0 0 1 185 28" fill="none" stroke="rgba(249,115,22,0.35)" stroke-width="6" stroke-linecap="round"/>
-        <path d="M 185 28 A 110 110 0 0 1 240 130" fill="none" stroke="rgba(239,68,68,0.35)" stroke-width="6" stroke-linecap="round"/>
-        <path id="arcP" d="M 20 130 A 110 110 0 0 1 240 130"
-          fill="none" stroke="url(#ag)" stroke-width="10" stroke-linecap="round"
-          stroke-dasharray="345" stroke-dashoffset="295"
-          style="transition:stroke-dashoffset 2.2s cubic-bezier(.4,0,.2,1)"/>
-        <g stroke="rgba(59,130,246,0.2)" stroke-width="1.5">
-          <line x1="130" y1="10" x2="130" y2="22"/>
-          <line x1="46"  y1="40" x2="54"  y2="50"/>
-          <line x1="214" y1="40" x2="206" y2="50"/>
-        </g>
-        <text x="10"  y="148" fill="#93c5fd" font-size="9.5" font-family="DM Sans,sans-serif">0</text>
-        <text x="130" y="10"  fill="#93c5fd" font-size="9.5" font-family="DM Sans,sans-serif" text-anchor="middle">250</text>
-        <text x="250" y="148" fill="#93c5fd" font-size="9.5" font-family="DM Sans,sans-serif" text-anchor="end">500</text>
-      </svg>
-      <div class="gauge-val" id="gv">0</div>
-      <div class="gauge-tag">GOOD — LIVE AQI</div>
-      <div class="gauge-shadow"></div>
-    </div>
-  </div>
-</section>
-
-<div class="stats">
-  <div class="stat"><div class="s-num">4</div><div class="s-lbl">Pollutants Tracked</div></div>
-  <div class="stat"><div class="s-num">6</div><div class="s-lbl">AQI Categories</div></div>
-  <div class="stat"><div class="s-num">ML</div><div class="s-lbl">Powered Engine</div></div>
-  <div class="stat"><div class="s-num">Live</div><div class="s-lbl">Visualization</div></div>
+<div class="mob-nav" id="mobNav">
+  <a href="/">Home</a>
+  <a href="/predict">Predict</a>
+  <a href="/datasets">Datasets</a>
+  <a href="/visualize">Visualize</a>
+  <a href="/about">About</a>
+  <a href="/predict" class="mob-cta">Check AQI Now →</a>
 </div>
 
-<section class="features">
-  <div class="sec-eye">What we offer</div>
-  <div class="sec-title">Everything you need to stay safe</div>
-  <div class="card-grid">
-    <div class="fcard" style="animation-delay:.1s">
-      <div class="ficon">🎯</div>
-      <h3>AQI Prediction</h3>
-      <p>Enter pollutant values and get instant color-coded AQI with a health advisory message.</p>
-      <a href="/predict">Predict now →</a>
+<!-- HERO -->
+<section class="hero">
+  <div class="pill"><span class="ldot"></span>Real-time Air Intelligence</div>
+  <h1 class="hero-h1">Know the air<br><span class="gr">before you breathe it</span></h1>
+  <p class="hero-p">AI-powered AQI prediction across Indian cities — tracking PM₂.₅, PM₁₀, NO₂ &amp; SO₂ with 96% model accuracy.</p>
+  <div class="hero-btns">
+    <a href="/predict" class="btn-solid">Check AQI Now</a>
+    <a href="/visualize" class="btn-outline">View Trends →</a>
+  </div>
+
+  <!-- GREEN CARD -->
+  <div class="hero-aqi-card">
+    <div class="hac-left">
+      <div class="hac-city-row">
+        <span class="hac-dot" id="hacDot"></span>
+        <span class="hac-city" id="hacCity">Loading…</span>
+        <span class="hac-live">● LIVE</span>
+      </div>
+      <div class="hac-num" id="hacNum">—</div>
+      <div class="hac-badge" id="hacBadge">—</div>
+      <div class="hac-meta" id="hacMeta">—</div>
     </div>
-    <div class="fcard" style="animation-delay:.2s">
-      <div class="ficon">📊</div>
-      <h3>Dataset Explorer</h3>
-      <p>Browse historical pollution records in an interactive table with filter support.</p>
-      <a href="/datasets">Explore data →</a>
+    <div class="hac-right">
+      <svg class="hac-ring-svg" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="10"/>
+        <circle id="hacArc" cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="10"
+          stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"
+          transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.6s cubic-bezier(.22,1,.36,1)"/>
+      </svg>
+      <div class="hac-pct" id="hacPct">—% of max</div>
     </div>
-    <div class="fcard" style="animation-delay:.3s">
-      <div class="ficon">📈</div>
-      <h3>Visual Analytics</h3>
-      <p>Trend charts built with Matplotlib &amp; Seaborn reveal hidden pollution patterns.</p>
-      <a href="/visualize">View charts →</a>
+    <div class="hac-bars">
+      <div class="hac-bar-row"><span class="hb-label">PM₂.₅</span><div class="hb-track"><div class="hb-fill" id="hb1"></div></div><span class="hb-val" id="hv1">—</span></div>
+      <div class="hac-bar-row"><span class="hb-label">PM₁₀</span><div class="hb-track"><div class="hb-fill" id="hb2"></div></div><span class="hb-val" id="hv2">—</span></div>
+      <div class="hac-bar-row"><span class="hb-label">NO₂</span><div class="hb-track"><div class="hb-fill" id="hb3"></div></div><span class="hb-val" id="hv3">—</span></div>
+      <div class="hac-bar-row"><span class="hb-label">SO₂</span><div class="hb-track"><div class="hb-fill" id="hb4"></div></div><span class="hb-val" id="hv4">—</span></div>
+    </div>
+  </div>
+
+  <!-- CITY HORIZONTAL SCROLL -->
+  <div class="city-scroll-wrap">
+    <div class="city-scroll-header">
+      <span class="city-scroll-title">Live AQI — Major Indian Cities</span>
+      <span class="scroll-hint">
+        <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+        Scroll to explore
+      </span>
+    </div>
+    <div class="city-scroll" id="cityScroll"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="sbox"><div class="sn">96<span class="g">%</span></div><div class="sl">Prediction Accuracy</div></div>
+  <div class="sbox"><div class="sn">4</div><div class="sl">Pollutants Tracked</div></div>
+  <div class="sbox"><div class="sn">6</div><div class="sl">AQI Categories</div></div>
+  <div class="sbox"><div class="sn">Live</div><div class="sl">Data &amp; Visualization</div></div>
+</div>
+
+<!-- METER -->
+<div class="meter-strip">
+  <div class="meter-top-row">
+    <div class="meter-aqi-val" id="mNum">—<small>/ 500</small></div>
+    <div class="meter-aqi-lbl" id="mLbl" style="background:#dcfce7;color:#16a34a">—</div>
+  </div>
+  <div class="meter-city-badge">
+    <span class="city-dot" id="mDot" style="background:#22c55e"></span>
+    <span id="mCity">Loading…</span>
+    <span style="opacity:.3">· Live AQI</span>
+  </div>
+  <div class="meter-title">Rotating across Indian cities every 3 seconds</div>
+  <div class="meter-track">
+    <div class="meter-fill" id="mFill"></div>
+    <div class="meter-needle" id="mNeedle" style="left:0%"></div>
+  </div>
+  <div class="meter-labels">
+    <span style="color:#4ade80">Good</span>
+    <span style="color:#a3e635">Satisfactory</span>
+    <span style="color:#fbbf24">Moderate</span>
+    <span style="color:#fb923c">Poor</span>
+    <span style="color:#f87171">Very Poor</span>
+    <span style="color:#c084fc">Severe</span>
+  </div>
+</div>
+
+<!-- QUICK LINKS -->
+<section class="sec">
+  <div class="inner">
+    <span class="stag reveal">Explore AQI Shield</span>
+    <h2 class="stitle reveal">Everything in one place</h2>
+    <p class="sdesc reveal">Navigate to any section — predict your AQI, explore data, or visualize trends.</p>
+    <div class="qlinks">
+      <a href="/predict" class="qlink reveal">
+        <div class="qico">🎯</div><h3>AQI Prediction</h3>
+        <p>Enter PM₂.₅, PM₁₀, NO₂ &amp; SO₂ values — ML model gives instant color-coded AQI &amp; health advisory.</p>
+        <span class="qarrow">Go to Predict →</span>
+      </a>
+      <a href="/datasets" class="qlink reveal" style="transition-delay:.08s">
+        <div class="qico">📊</div><h3>Dataset Explorer</h3>
+        <p>Browse historical AQI records in an interactive filterable table with city-wise breakdowns.</p>
+        <span class="qarrow">Go to Datasets →</span>
+      </a>
+      <a href="/visualize" class="qlink reveal" style="transition-delay:.16s">
+        <div class="qico">📈</div><h3>Visual Analytics</h3>
+        <p>Bar charts, distribution plots &amp; heatmaps built with Matplotlib &amp; Seaborn.</p>
+        <span class="qarrow">Go to Visualize →</span>
+      </a>
     </div>
   </div>
 </section>
 
-<section class="polls">
-  <div class="sec-eye" style="text-align:center">Measured pollutants</div>
-  <div class="sec-title" style="text-align:center">Four critical indicators</div>
-  <div class="pgrid">
-    <div class="pcard">
-      <div class="pf">PM<sub style="font-size:.65em">2.5</sub></div>
-      <div class="pn">Fine Particulate Matter</div>
-      <div class="pr">0–500 µg/m³</div>
-    </div>
-    <div class="pcard">
-      <div class="pf">PM<sub style="font-size:.65em">10</sub></div>
-      <div class="pn">Coarse Particulate Matter</div>
-      <div class="pr">0–1000 µg/m³</div>
-    </div>
-    <div class="pcard">
-      <div class="pf">NO<sub style="font-size:.65em">2</sub></div>
-      <div class="pn">Nitrogen Dioxide</div>
-      <div class="pr">0–300 ppb</div>
-    </div>
-    <div class="pcard">
-      <div class="pf">SO<sub style="font-size:.65em">2</sub></div>
-      <div class="pn">Sulphur Dioxide</div>
-      <div class="pr">0–300 ppb</div>
+<!-- POLLUTANTS -->
+<section class="sec alt">
+  <div class="inner">
+    <span class="stag reveal">Measured Indicators</span>
+    <h2 class="stitle reveal">Four critical pollutants</h2>
+    <p class="sdesc reveal">The most impactful air pollutants monitored across Indian cities in real time.</p>
+    <div class="poll-grid">
+      <div class="poll-card reveal"><div class="psym">PM<sub>2.5</sub></div><div class="pname">Fine Particulate Matter</div><div class="prange">0 – 500 µg/m³</div></div>
+      <div class="poll-card reveal" style="transition-delay:.07s"><div class="psym">PM<sub>10</sub></div><div class="pname">Coarse Particulate Matter</div><div class="prange">0 – 1000 µg/m³</div></div>
+      <div class="poll-card reveal" style="transition-delay:.13s"><div class="psym">NO<sub>2</sub></div><div class="pname">Nitrogen Dioxide</div><div class="prange">0 – 300 ppb</div></div>
+      <div class="poll-card reveal" style="transition-delay:.19s"><div class="psym">SO<sub>2</sub></div><div class="pname">Sulphur Dioxide</div><div class="prange">0 – 300 ppb</div></div>
     </div>
   </div>
 </section>
 
-<footer>© 2026 <span>AQI Shield</span> · Built with ❤️ for environment safety 🚀</footer>
+<!-- AQI TABLE -->
+<section class="sec">
+  <div class="inner">
+    <span class="stag reveal">Reference Guide</span>
+    <h2 class="stitle reveal">Understanding your AQI score</h2>
+    <p class="sdesc reveal">India's six-category AQI scale — each level linked to a health advisory.</p>
+    <table class="ref-table reveal">
+      <thead><tr><th>Category</th><th>AQI Range</th><th>Health Implication</th><th>Who's at Risk</th></tr></thead>
+      <tbody>
+        <tr><td><span class="cc"><span class="cdot" style="background:#16a34a"></span>Good</span></td><td>0 – 50</td><td>Minimal impact</td><td>No one</td></tr>
+        <tr><td><span class="cc"><span class="cdot" style="background:#65a30d"></span>Satisfactory</span></td><td>51 – 100</td><td>Minor discomfort for sensitive people</td><td>Very sensitive groups</td></tr>
+        <tr><td><span class="cc"><span class="cdot" style="background:#ca8a04"></span>Moderate</span></td><td>101 – 200</td><td>Discomfort on prolonged exposure</td><td>Heart / lung patients</td></tr>
+        <tr><td><span class="cc"><span class="cdot" style="background:#ea580c"></span>Poor</span></td><td>201 – 300</td><td>Breathing discomfort to most people</td><td>General public</td></tr>
+        <tr><td><span class="cc"><span class="cdot" style="background:#dc2626"></span>Very Poor</span></td><td>301 – 400</td><td>Respiratory illness on prolonged exposure</td><td>General public</td></tr>
+        <tr><td><span class="cc"><span class="cdot" style="background:#7c3aed"></span>Severe</span></td><td>401 – 500</td><td>Serious respiratory effects for all</td><td>Entire population</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <div class="fb">AQI<span>Shield</span></div>
+  <div class="fc">© 2026 AQI Shield · Built for a cleaner India · Powered by Machine Learning</div>
+</footer>
 </div>
 
 <script>
-/* ── ANIMATED BLUE CLOUDS on WHITE BG ── */
-const canvas = document.getElementById('cloudCanvas');
-const ctx = canvas.getContext('2d');
-let W, H;
+/* ── CLOUDS ── */
+const sky=document.getElementById('sky'),ctx=sky.getContext('2d');let W,H;
+function resize(){W=sky.width=innerWidth;H=sky.height=innerHeight;}resize();window.addEventListener('resize',resize);
+class Cloud{constructor(l,sx){this.layer=l;this.reset(sx!==undefined?sx:Math.random()*W*1.6-W*.3);}
+reset(x){const l=this.layer;this.x=x;this.y=H*(.03+l*.14+Math.random()*.13)-20;
+this.speed=.13+l*.12+Math.random()*.12;this.base=50+l*26+Math.random()*44;
+this.sx=1.1+Math.random()*.55;this.sy=.52+Math.random()*.26;this.alpha=.045+l*.018+Math.random()*.024;
+const n=6+Math.round(Math.random()*4);
+this.puffs=Array.from({length:n},(_,i)=>({ox:(i/(n-1)-.5)*this.base*2.5*this.sx,oy:(Math.random()-.5)*this.base*.42*this.sy,r:this.base*(.36+Math.random()*.38)*this.sy}));}
+draw(){ctx.save();ctx.translate(this.x,this.y);this.puffs.forEach(p=>{const g=ctx.createRadialGradient(p.ox,p.oy-p.r*.1,p.r*.03,p.ox,p.oy,p.r);const a=this.alpha;g.addColorStop(0,`rgba(175,185,192,${a*2.5})`);g.addColorStop(.28,`rgba(190,198,206,${a*1.6})`);g.addColorStop(.62,`rgba(208,213,218,${a*.8})`);g.addColorStop(1,`rgba(222,225,230,0)`);ctx.beginPath();ctx.arc(p.ox,p.oy,p.r,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();});ctx.restore();}
+tick(){this.x+=this.speed;if(this.x>W*1.65)this.reset(-W*.45);}}
+const clouds=[];[6,5,3].forEach((n,l)=>{for(let i=0;i<n;i++)clouds.push(new Cloud(l));});
+(function loop(){ctx.clearRect(0,0,W,H);clouds.sort((a,b)=>a.layer-b.layer);clouds.forEach(c=>{c.tick();c.draw();});requestAnimationFrame(loop);})();
 
-function resize() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener('resize', resize);
-
-class Cloud {
-  constructor(layer) { this.layer = layer; this.reset(true); }
-  reset(init) {
-    const l = this.layer;
-    this.y = H * (0.04 + l * 0.14 + Math.random() * 0.12);
-    this.x = init ? Math.random() * W * 1.4 - W * 0.2 : -W * 0.4;
-    this.w = 180 + l * 100 + Math.random() * 160;
-    this.h = this.w * (0.25 + Math.random() * 0.12);
-    this.speed = 0.25 + l * 0.2 + Math.random() * 0.2;
-    this.alpha = 0.055 + l * 0.03 + Math.random() * 0.025;
-    this.puffs = [];
-    const n = 5 + Math.floor(Math.random() * 5);
-    for (let i = 0; i < n; i++) {
-      this.puffs.push({
-        ox: (i / (n - 1) - 0.5) * this.w * 0.88,
-        oy: (Math.random() - 0.5) * this.h * 0.5,
-        r: this.h * (0.4 + Math.random() * 0.32)
-      });
-    }
-  }
-  draw() {
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    this.puffs.forEach(p => {
-      const grad = ctx.createRadialGradient(p.ox, p.oy - p.r * 0.12, p.r * 0.05, p.ox, p.oy, p.r);
-      const a = this.alpha;
-      grad.addColorStop(0,    `rgba(96,165,250,${a * 2.2})`);
-      grad.addColorStop(0.35, `rgba(147,197,253,${a * 1.4})`);
-      grad.addColorStop(0.7,  `rgba(191,219,254,${a * 0.7})`);
-      grad.addColorStop(1,    `rgba(219,234,254,0)`);
-      ctx.beginPath();
-      ctx.arc(p.ox, p.oy, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
-    });
-    ctx.restore();
-  }
-  update() { this.x += this.speed; if (this.x > W * 1.4) this.reset(false); }
+/* ── MOBILE NAV ── */
+function toggleMob(){
+  document.getElementById('hamBtn').classList.toggle('open');
+  document.getElementById('mobNav').classList.toggle('open');
 }
 
-const clouds = [];
-for (let l = 0; l < 3; l++) {
-  const n = l === 0 ? 5 : l === 1 ? 4 : 3;
-  for (let i = 0; i < n; i++) clouds.push(new Cloud(l));
+/* ── AQI INFO ── */
+function aqiInfo(v){
+  if(v<=50)  return{l:'Good',        bg:'#dcfce7',c:'#16a34a',stroke:'#22c55e',dot:'#22c55e',fill:'rgba(34,197,94,.08)'};
+  if(v<=100) return{l:'Satisfactory',bg:'#ecfccb',c:'#4d7c0f',stroke:'#84cc16',dot:'#84cc16',fill:'rgba(132,204,22,.08)'};
+  if(v<=200) return{l:'Moderate',    bg:'#fef9c3',c:'#854d0e',stroke:'#eab308',dot:'#eab308',fill:'rgba(234,179,8,.08)'};
+  if(v<=300) return{l:'Poor',        bg:'#ffedd5',c:'#c2410c',stroke:'#f97316',dot:'#f97316',fill:'rgba(249,115,22,.08)'};
+  if(v<=400) return{l:'Very Poor',   bg:'#fee2e2',c:'#b91c1c',stroke:'#ef4444',dot:'#ef4444',fill:'rgba(239,68,68,.08)'};
+  return            {l:'Severe',     bg:'#ede9fe',c:'#6d28d9',stroke:'#7c3aed',dot:'#7c3aed',fill:'rgba(124,58,237,.08)'};
 }
 
-function loop() {
-  ctx.clearRect(0, 0, W, H);
-  clouds.sort((a, b) => a.layer - b.layer);
-  clouds.forEach(c => { c.update(); c.draw(); });
-  requestAnimationFrame(loop);
-}
-loop();
+/* ── 25 CITIES ── */
+const CITIES=[
+  {name:'Delhi NCR',    aqi:187,pm25:72, pm10:148,no2:42,so2:18},
+  {name:'Mumbai',       aqi:94, pm25:38, pm10:72, no2:28,so2:10},
+  {name:'Bangalore',    aqi:56, pm25:22, pm10:44, no2:18,so2:6},
+  {name:'Chennai',      aqi:78, pm25:30, pm10:58, no2:22,so2:8},
+  {name:'Kolkata',      aqi:214,pm25:88, pm10:172,no2:54,so2:22},
+  {name:'Hyderabad',    aqi:112,pm25:46, pm10:90, no2:32,so2:12},
+  {name:'Pune',         aqi:68, pm25:26, pm10:52, no2:20,so2:7},
+  {name:'Ahmedabad',    aqi:156,pm25:62, pm10:122,no2:38,so2:16},
+  {name:'Jaipur',       aqi:198,pm25:80, pm10:158,no2:50,so2:20},
+  {name:'Lucknow',      aqi:276,pm25:112,pm10:198,no2:64,so2:26},
+  {name:'Kanpur',       aqi:308,pm25:136,pm10:218,no2:72,so2:30},
+  {name:'Patna',        aqi:348,pm25:154,pm10:242,no2:78,so2:34},
+  {name:'Varanasi',     aqi:322,pm25:142,pm10:228,no2:74,so2:32},
+  {name:'Bhopal',       aqi:138,pm25:56, pm10:106,no2:36,so2:14},
+  {name:'Nagpur',       aqi:118,pm25:48, pm10:92, no2:32,so2:12},
+  {name:'Indore',       aqi:128,pm25:52, pm10:100,no2:34,so2:13},
+  {name:'Surat',        aqi:152,pm25:62, pm10:118,no2:38,so2:16},
+  {name:'Amritsar',     aqi:244,pm25:100,pm10:178,no2:58,so2:24},
+  {name:'Chandigarh',   aqi:162,pm25:66, pm10:128,no2:40,so2:16},
+  {name:'Kochi',        aqi:58, pm25:24, pm10:46, no2:16,so2:6},
+  {name:'Coimbatore',   aqi:66, pm25:26, pm10:50, no2:18,so2:7},
+  {name:'Visakhapatnam',aqi:96, pm25:40, pm10:78, no2:28,so2:10},
+  {name:'Bhubaneswar',  aqi:142,pm25:58, pm10:110,no2:36,so2:14},
+  {name:'Guwahati',     aqi:118,pm25:48, pm10:92, no2:30,so2:12},
+  {name:'Dehradun',     aqi:102,pm25:42, pm10:80, no2:26,so2:10},
+];
 
-/* ── GAUGE ── */
-setTimeout(() => { document.getElementById('arcP').style.strokeDashoffset = '245'; }, 400);
-let t = 72, cur = 0;
-const tick = () => {
-  cur = Math.min(cur + 1, t);
-  document.getElementById('gv').textContent = cur;
-  if (cur < t) requestAnimationFrame(tick);
-};
-setTimeout(tick, 600);
+/* CIRCUMFERENCE for r=28 → 2π×28 ≈ 176 */
+const CIRC=176;
+
+/* ── BUILD CITY CARDS ── */
+const scroll=document.getElementById('cityScroll');
+CITIES.forEach((city,i)=>{
+  const d=aqiInfo(city.aqi);
+  const pct=Math.min(city.aqi/500,1);
+  const pctNum=Math.round(pct*100);
+  const offset=CIRC-(CIRC*pct);
+  const div=document.createElement('div');
+  div.className='city-card'+(i===0?' active':'');
+  div.id='cc'+i;
+  div.innerHTML=`
+    <div class="cr-wrap">
+      <svg class="cr-svg" viewBox="0 0 72 72">
+        <circle class="cr-bg" cx="36" cy="36" r="28"/>
+        <circle class="cr-fill" id="crf${i}" cx="36" cy="36" r="28" fill="${d.fill}" style="stroke:${d.stroke};stroke-dashoffset:${offset}"/>
+      </svg>
+      <div class="cr-center">
+        <div class="cr-pct" id="crp${i}">${pctNum}%</div>
+        <div class="cr-label">AQI</div>
+      </div>
+    </div>
+    <div class="city-name">${city.name}</div>
+    <div class="city-cat" id="ccat${i}" style="background:${d.bg};color:${d.c}">${d.l}</div>`;
+  scroll.appendChild(div);
+});
+
+/* Animate rings after render */
+setTimeout(()=>{
+  CITIES.forEach((city,i)=>{
+    const pct=Math.min(city.aqi/500,1);
+    const el=document.getElementById('crf'+i);
+    if(el) el.style.strokeDashoffset=CIRC-(CIRC*pct);
+  });
+},200);
+
+/* ── CITY ROTATION ── */
+let cidx=0;
+function showCity(idx){
+  const city=CITIES[idx];
+  const d=aqiInfo(city.aqi);
+  const pct=Math.min(city.aqi/500,1);
+
+  /* meter */
+  document.getElementById('mFill').style.width=(pct*100)+'%';
+  document.getElementById('mNeedle').style.left='calc('+pct*100+'% - 1.5px)';
+  document.getElementById('mNum').innerHTML=city.aqi+'<small>/ 500</small>';
+  const ml=document.getElementById('mLbl');
+  ml.textContent=d.l;ml.style.background=d.bg;ml.style.color=d.c;
+  document.getElementById('mCity').textContent=city.name;
+  document.getElementById('mDot').style.background=d.dot;
+
+  /* hero card */
+  document.getElementById('hacCity').textContent=city.name;
+  document.getElementById('hacNum').textContent=city.aqi;
+  document.getElementById('hacDot').style.background=d.dot;
+  const hb=document.getElementById('hacBadge');
+  hb.textContent=d.l;
+  document.getElementById('hacMeta').textContent=
+    'PM₂.₅ '+city.pm25+' µg/m³  ·  PM₁₀ '+city.pm10+' µg/m³  ·  NO₂ '+city.no2+' ppb';
+  document.getElementById('hacArc').style.strokeDashoffset=314-(314*pct);
+  document.getElementById('hacPct').textContent=Math.round(pct*100)+'% of max';
+  const bars=[
+    {b:'hb1',v:'hv1',val:city.pm25,max:500},
+    {b:'hb2',v:'hv2',val:city.pm10,max:1000},
+    {b:'hb3',v:'hv3',val:city.no2, max:300},
+    {b:'hb4',v:'hv4',val:city.so2, max:300},
+  ];
+  bars.forEach(b=>{
+    document.getElementById(b.v).textContent=b.val;
+    document.getElementById(b.b).style.width=Math.min(b.val/b.max*100,100)+'%';
+  });
+
+  /* highlight active card & scroll to it */
+  document.querySelectorAll('.city-card').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  const activeCard=document.getElementById('cc'+idx);
+  if(activeCard) activeCard.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+
+setTimeout(()=>showCity(0),500);
+setInterval(()=>{ cidx=(cidx+1)%CITIES.length; showCity(cidx); },3000);
+
+/* ── SCROLL REVEAL ── */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
+},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 </script>
 </body>
 </html>
