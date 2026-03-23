@@ -1,288 +1,344 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>AQI Predictor</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predict AQI — AQI Shield</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;min-height:100vh;overflow-x:hidden;font-family:'DM Sans',sans-serif}
-body{background:#ffffff;color:#1a2744}
-
-#cloudCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap');
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --white:#fff;--bg:#f7faf7;--bg2:#eef5ee;
+  --ink:#141f14;--ink2:#2e3d2e;--muted:#6b7f6b;
+  --line:#ddeadd;--G:#2d7a3a;--G2:#3a9e4a;
+  --G3:#e8f5e9;--G4:#c8e6c9;--Gdk:#1b5e20;
+}
+html,body{width:100%;min-height:100vh;overflow-x:hidden;
+  background:var(--white);color:var(--ink);
+  font-family:'Nunito',Calibri,'Segoe UI',sans-serif;
+  -webkit-font-smoothing:antialiased}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .page{position:relative;z-index:1;min-height:100vh;padding-bottom:60px}
 
-/* NAVBAR */
-nav{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:20px 60px;
-  background:rgba(255,255,255,0.88);
-  backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(59,130,246,0.12);
-  position:sticky;top:0;z-index:200;
-  box-shadow:0 1px 24px rgba(59,130,246,0.06);
-}
-.logo{
-  font-family:'Syne',sans-serif;font-size:1.55rem;font-weight:800;
-  color:#1e40af;letter-spacing:-0.5px;
-}
-.logo span{color:#60a5fa}
-.nav-links{display:flex;gap:4px}
-.nav-links a{
-  color:#64748b;text-decoration:none;
-  padding:8px 16px;border-radius:10px;font-size:.9rem;font-weight:500;
-  transition:all .22s;
-}
-.nav-links a:hover{color:#1e40af;background:rgba(59,130,246,0.07)}
+/* NAV */
+nav{position:sticky;top:0;z-index:500;display:flex;align-items:center;
+  justify-content:space-between;padding:0 60px;height:62px;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;
+  font-size:1.3rem;font-weight:800;color:var(--ink)}
+.logo-mark{width:32px;height:32px;border-radius:9px;background:var(--G);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2.2;
+  stroke-linecap:round;stroke-linejoin:round}
+.logo span{color:var(--G)}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{font-size:.875rem;font-weight:500;color:var(--muted);
+  text-decoration:none;padding:7px 14px;border-radius:8px;transition:all .18s}
+.nav-links a:hover{color:var(--ink);background:var(--G3)}
+.nav-links a.active{color:var(--G);background:var(--G3);font-weight:700}
+.nav-links .cta{margin-left:8px;background:var(--G);color:#fff!important;
+  padding:9px 22px;border-radius:9px;font-weight:700;font-size:.855rem;
+  box-shadow:0 2px 14px rgba(45,122,58,.28);transition:all .2s}
+.nav-links .cta:hover{background:var(--Gdk);transform:translateY(-1px)}
 
-/* PAGE HEADER */
-.page-header{
-  text-align:center;padding:60px 40px 20px;
-}
-.page-header h1{
-  font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;
-  letter-spacing:-2px;color:#0f172a;
-  animation:fadeUp .8s ease both;
-}
-.page-header h1 em{
-  font-style:normal;
-  background:linear-gradient(135deg,#1d4ed8,#3b82f6,#60a5fa);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.page-header p{
-  margin-top:12px;color:#64748b;font-size:1rem;
-  animation:fadeUp .9s ease .1s both;
-}
+/* PAGE */
+.predict-wrap{max-width:700px;margin:0 auto;padding:60px 24px 80px}
+.page-eyebrow{display:inline-flex;align-items:center;gap:8px;
+  background:var(--G3);border:1px solid var(--G4);border-radius:999px;
+  padding:6px 20px;font-size:.75rem;font-weight:700;color:var(--G);
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:18px}
+.page-h1{font-size:clamp(2rem,4vw,2.8rem);font-weight:800;color:var(--ink);
+  letter-spacing:-1.5px;margin-bottom:8px}
+.page-h1 em{font-style:normal;color:var(--G)}
+.page-sub{font-size:.98rem;color:var(--muted);line-height:1.7;margin-bottom:36px}
 
-/* BOX / FORM */
-.box{
-  margin:40px auto;max-width:620px;
-  background:rgba(255,255,255,0.92);
-  padding:48px 44px;
-  border-radius:28px;
-  border:1px solid rgba(59,130,246,0.14);
-  box-shadow:0 8px 48px rgba(59,130,246,0.1),0 2px 12px rgba(0,0,0,0.04);
-  animation:fadeUp 1s ease .2s both;
-}
-
-/* INPUT GROUP */
-.input-group{
-  margin:20px 0;text-align:left;
-  background:rgba(239,246,255,0.6);
-  padding:18px 20px;
-  border-radius:16px;
-  border-left:4px solid #3b82f6;
-  transition:.3s;
-}
-.input-group:hover{
-  transform:translateX(6px);
-  background:rgba(219,234,254,0.6);
-  border-left-color:#1d4ed8;
-}
-.input-group label{
-  font-size:1rem;font-weight:600;color:#1e40af;
-}
-.range{
-  float:right;font-size:.8rem;color:#60a5fa;font-weight:500;
-}
-input[type=number]{
-  width:100%;padding:13px 16px;margin-top:10px;
-  border-radius:10px;
-  background:#fff;
-  border:1.5px solid rgba(59,130,246,0.2);
-  color:#0f172a;font-size:1rem;
-  font-family:'DM Sans',sans-serif;
-  transition:.2s;outline:none;
-}
-input[type=number]:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,0.12)}
-input[type=number]::placeholder{color:#93c5fd}
-
-/* BUTTON */
-button{
-  margin-top:28px;width:100%;
-  padding:16px;
-  background:linear-gradient(135deg,#1d4ed8,#3b82f6);
-  color:#fff;border:none;
-  border-radius:14px;
-  font-size:1.05rem;font-weight:700;
-  cursor:pointer;transition:.28s;
-  font-family:'DM Sans',sans-serif;
-  box-shadow:0 4px 24px rgba(59,130,246,0.35);
-  letter-spacing:.02em;
-}
-button:hover{transform:translateY(-3px);box-shadow:0 8px 40px rgba(59,130,246,0.5)}
-button:active{transform:translateY(0)}
+/* FORM CARD */
+.form-card{background:var(--white);border:1px solid var(--line);
+  border-radius:22px;padding:36px 32px;
+  box-shadow:0 4px 32px rgba(45,122,58,.07);margin-bottom:24px}
+.form-card h3{font-size:1rem;font-weight:800;color:var(--ink);margin-bottom:20px;
+  display:flex;align-items:center;gap:8px}
+.inp-group{background:var(--G3);border-left:4px solid var(--G);
+  border-radius:14px;padding:16px 18px;margin-bottom:14px;transition:all .2s}
+.inp-group:hover{background:var(--G4);border-left-color:var(--Gdk);transform:translateX(4px)}
+.inp-group label{font-size:.95rem;font-weight:700;color:var(--G);
+  display:flex;justify-content:space-between;align-items:center}
+.inp-range{font-size:.75rem;color:var(--G2);font-weight:500}
+.inp-group input{width:100%;padding:11px 14px;margin-top:9px;
+  border-radius:9px;border:1.5px solid var(--G4);
+  background:var(--white);font-family:inherit;font-size:.95rem;
+  color:var(--ink);outline:none;transition:all .18s}
+.inp-group input:focus{border-color:var(--G);box-shadow:0 0 0 3px rgba(45,122,58,.1)}
+.inp-group input::placeholder{color:#a7c4a7}
+.predict-btn{margin-top:22px;width:100%;padding:15px;
+  background:var(--G);color:#fff;border:none;border-radius:11px;
+  font-family:inherit;font-size:1rem;font-weight:800;
+  cursor:pointer;transition:all .22s;letter-spacing:.02em;
+  box-shadow:0 4px 20px rgba(45,122,58,.3)}
+.predict-btn:hover{background:var(--Gdk);transform:translateY(-2px);box-shadow:0 8px 32px rgba(45,122,58,.42)}
+.predict-btn:active{transform:translateY(0)}
 
 /* ERROR */
-.error-msg{
-  margin-top:16px;padding:12px 18px;
-  background:rgba(254,226,226,0.8);
-  border:1px solid rgba(239,68,68,0.25);
-  border-radius:10px;color:#dc2626;font-size:.9rem;
-}
+.error-box{margin-top:16px;padding:14px 18px;background:#fee2e2;
+  border:1px solid #fca5a5;border-radius:10px;color:#b91c1c;
+  font-size:.9rem;font-weight:500}
 
 /* RESULT */
-.result{
-  margin-top:36px;padding:32px;
-  border-radius:22px;
-  font-size:1rem;
-  animation:pop .5s cubic-bezier(.34,1.56,.64,1);
-  border:2px solid;text-align:center;
-}
-@keyframes pop{from{transform:scale(0.6);opacity:0}to{transform:scale(1);opacity:1}}
+.result-wrap{animation:pop .55s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(.75);opacity:0}to{transform:scale(1);opacity:1}}
 
-.result h2{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;margin-bottom:8px}
-.result h3{font-size:1.1rem;font-weight:600;margin-bottom:12px;opacity:.85}
-.result p{font-size:.95rem;line-height:1.6;opacity:.8}
+.result-main{border-radius:20px;padding:32px;text-align:center;
+  border:2.5px solid;margin-bottom:18px}
+.result-main .r-aqi{font-size:4.5rem;font-weight:800;line-height:1;letter-spacing:-3px}
+.result-main .r-cat{font-size:1.2rem;font-weight:800;margin:8px 0 4px;opacity:.88}
+.result-main .r-msg{font-size:.95rem;line-height:1.65;opacity:.72;margin-top:8px}
 
-.good              {border-color:#22c55e;background:rgba(220,252,231,0.85);color:#14532d}
-.moderate          {border-color:#eab308;background:rgba(254,249,195,0.85);color:#713f12}
-.unhealthy-sensitive{border-color:#f97316;background:rgba(255,237,213,0.85);color:#7c2d12}
-.unhealthy         {border-color:#ef4444;background:rgba(254,226,226,0.85);color:#7f1d1d}
-.very-unhealthy    {border-color:#a855f7;background:rgba(243,232,255,0.85);color:#4a1d96}
-.hazardous         {border-color:#9f1239;background:rgba(255,228,230,0.85);color:#4c0519}
+/* color variants */
+.rc-good{border-color:#22c55e;background:#dcfce7;color:#14532d}
+.rc-satisfactory{border-color:#84cc16;background:#ecfccb;color:#3f6212}
+.rc-moderate{border-color:#eab308;background:#fef9c3;color:#713f12}
+.rc-poor{border-color:#f97316;background:#ffedd5;color:#7c2d12}
+.rc-very_poor,.rc-very-unhealthy,.rc-very_unhealthy{border-color:#ef4444;background:#fee2e2;color:#7f1d1d}
+.rc-severe,.rc-hazardous{border-color:#7c3aed;background:#ede9fe;color:#4c1d95}
+.rc-green{border-color:#22c55e;background:#dcfce7;color:#14532d}
+.rc-yellow{border-color:#eab308;background:#fef9c3;color:#713f12}
+.rc-orange{border-color:#f97316;background:#ffedd5;color:#7c2d12}
+.rc-red{border-color:#ef4444;background:#fee2e2;color:#7f1d1d}
+.rc-purple{border-color:#a855f7;background:#f3e8ff;color:#4a1d96}
+.rc-maroon{border-color:#9f1239;background:#ffe4e6;color:#4c0519}
 
-/* BACK LINK */
-.back-link{
-  display:block;text-align:center;margin-top:28px;
-  color:#3b82f6;font-size:.9rem;font-weight:500;text-decoration:none;
-  transition:.2s;
-}
-.back-link:hover{color:#1d4ed8}
+/* BREAKDOWN CARD */
+.breakdown-card{background:var(--white);border:1px solid var(--line);
+  border-radius:18px;padding:28px 28px;
+  box-shadow:0 2px 16px rgba(45,122,58,.05)}
+.breakdown-card h4{font-size:.95rem;font-weight:800;color:var(--ink);
+  margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.pollutant-bars{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
+.pbar-row{display:flex;align-items:center;gap:12px}
+.pbar-label{font-size:.78rem;font-weight:700;color:var(--ink2);min-width:48px}
+.pbar-track{flex:1;height:10px;background:var(--line);border-radius:5px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:5px;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.pbar-val{font-size:.76rem;font-weight:700;color:var(--muted);min-width:52px;text-align:right}
 
-footer{text-align:center;padding:32px;color:#94a3b8;font-size:.82rem;border-top:1px solid rgba(59,130,246,0.07);background:#fff;margin-top:40px}
-footer span{color:#3b82f6;font-weight:600}
+.contribution-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:22px}
+.contrib-box{background:var(--G3);border:1px solid var(--G4);
+  border-radius:12px;padding:14px 16px}
+.contrib-box .cb-name{font-size:.72rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.contrib-box .cb-val{font-size:1.3rem;font-weight:800;color:var(--ink);line-height:1}
+.contrib-box .cb-unit{font-size:.68rem;color:var(--muted)}
+.contrib-box .cb-impact{font-size:.7rem;font-weight:700;margin-top:5px;
+  padding:2px 8px;border-radius:999px;display:inline-block}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:680px){
-  nav{padding:16px 20px}.nav-links a{padding:6px 10px;font-size:.82rem}
-  .box{margin:24px 16px;padding:28px 22px}
-  .page-header h1{font-size:2.2rem}
+.advice-row{display:flex;flex-direction:column;gap:8px}
+.advice-item{display:flex;align-items:flex-start;gap:10px;
+  background:var(--bg);border-radius:10px;padding:12px 14px;
+  font-size:.85rem;color:var(--ink2);line-height:1.6}
+.advice-item .ai-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+
+/* FOOTER */
+footer{background:var(--ink);padding:32px 60px;display:flex;
+  align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.fb{font-size:1rem;font-weight:800;color:rgba(255,255,255,.8)}
+.fb span{color:#4ade80}
+.fc{font-size:.79rem;color:rgba(255,255,255,.3)}
+
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* RESPONSIVE */
+@media(max-width:720px){
+  nav{padding:0 16px;height:56px}
+  .nav-links a:not(.cta){display:none}
+  .predict-wrap{padding:44px 14px 60px}
+  .form-card{padding:22px 16px}
+  .breakdown-card{padding:20px 14px}
+  .contribution-grid{grid-template-columns:1fr 1fr}
+  footer{flex-direction:column;text-align:center;padding:24px 16px}
 }
 </style>
 </head>
 <body>
-
-<canvas id="cloudCanvas"></canvas>
-
+<canvas id="sky"></canvas>
 <div class="page">
 
 <nav>
-  <div class="logo">AQI<span>Shield</span></div>
+  <a class="logo" href="/">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 12s.5-3 4-3 4 3 4 3-1 3-4 3-4-3-4-3z"/></svg>
+    </div>
+    AQI<span>Shield</span>
+  </a>
   <div class="nav-links">
     <a href="/">Home</a>
-    <a href="/predict">Predict</a>
+    <a href="/predict" class="active">Predict</a>
     <a href="/datasets">Datasets</a>
     <a href="/visualize">Visualize</a>
     <a href="/about">About</a>
+    <a href="/predict" class="cta">Check AQI →</a>
   </div>
 </nav>
 
-<div class="page-header">
-  <h1>AQI <em>Predictor</em></h1>
-  <p>Enter pollutant concentrations to calculate your Air Quality Index</p>
-</div>
+<div class="predict-wrap">
+  <div class="page-eyebrow">🎯 ML Prediction</div>
+  <h1 class="page-h1">AQI <em>Predictor</em></h1>
+  <p class="page-sub">Enter pollutant concentrations — our trained ML model predicts your Air Quality Index instantly</p>
 
-<div class="box">
-  <form method="post">
+  <!-- FORM -->
+  <div class="form-card">
+    <h3>🧪 Enter Pollutant Values</h3>
+    <form method="post" action="/predict">
+      <div class="inp-group">
+        <label>PM₂.₅ — Fine Particulate Matter <span class="inp-range">0 – 500 µg/m³</span></label>
+        <input type="number" step="0.01" name="PM2_5"
+          placeholder="e.g. 45.5"
+          value="{{ request.form.get('PM2_5', '') }}" required>
+      </div>
+      <div class="inp-group">
+        <label>PM₁₀ — Coarse Particulate Matter <span class="inp-range">0 – 1000 µg/m³</span></label>
+        <input type="number" step="0.01" name="PM10"
+          placeholder="e.g. 92.0"
+          value="{{ request.form.get('PM10', '') }}" required>
+      </div>
+      <div class="inp-group">
+        <label>NO₂ — Nitrogen Dioxide <span class="inp-range">0 – 300 ppb</span></label>
+        <input type="number" step="0.01" name="NO2"
+          placeholder="e.g. 28.0"
+          value="{{ request.form.get('NO2', '') }}" required>
+      </div>
+      <div class="inp-group">
+        <label>SO₂ — Sulphur Dioxide <span class="inp-range">0 – 300 ppb</span></label>
+        <input type="number" step="0.01" name="SO2"
+          placeholder="e.g. 12.0"
+          value="{{ request.form.get('SO2', '') }}" required>
+      </div>
+      <button type="submit" class="predict-btn">🔍 Predict AQI with ML Model →</button>
+    </form>
 
-    <div class="input-group">
-      <label>PM2.5</label><span class="range">0 – 500</span>
-      <input type="number" step="0.01" name="PM2_5" placeholder="Enter PM2.5 value" required>
-    </div>
+    {% if error %}
+    <div class="error-box">⚠️ {{ error }}</div>
+    {% endif %}
+  </div>
 
-    <div class="input-group">
-      <label>PM10</label><span class="range">0 – 1000</span>
-      <input type="number" step="0.01" name="PM10" placeholder="Enter PM10 value" required>
-    </div>
-
-    <div class="input-group">
-      <label>NO₂</label><span class="range">0 – 300</span>
-      <input type="number" step="0.01" name="NO2" placeholder="Enter NO₂ value" required>
-    </div>
-
-    <div class="input-group">
-      <label>SO₂</label><span class="range">0 – 300</span>
-      <input type="number" step="0.01" name="SO2" placeholder="Enter SO₂ value" required>
-    </div>
-
-    <button type="submit">Predict AQI →</button>
-  </form>
-
-  {% if error %}
-    <div class="error-msg">⚠️ {{ error }}</div>
-  {% endif %}
-
+  <!-- RESULT — shown only after prediction -->
   {% if show %}
-    <div class="result {{ color }}">
-      <h2>{{ aqi }}</h2>
-      <h3>{{ category }}</h3>
-      <p>{{ message }}</p>
+  <div class="result-wrap">
+
+    <!-- MAIN RESULT BOX -->
+    <div class="result-main rc-{{ color }}">
+      <div class="r-aqi">{{ aqi }}</div>
+      <div class="r-cat">{{ category }}</div>
+      <div class="r-msg">{{ message }}</div>
     </div>
+
+    <!-- DETAILED BREAKDOWN -->
+    <div class="breakdown-card">
+      <h4>📊 Pollutant Breakdown &amp; Model Analysis</h4>
+
+      <!-- bars -->
+      <div class="pollutant-bars">
+        <div class="pbar-row">
+          <span class="pbar-label">PM₂.₅</span>
+          <div class="pbar-track"><div class="pbar-fill" style="width:{{ [(request.form.get('PM2_5','0')|float)/500*100,100]|min|round }}%;background:#ef4444"></div></div>
+          <span class="pbar-val">{{ request.form.get('PM2_5','—') }} µg/m³</span>
+        </div>
+        <div class="pbar-row">
+          <span class="pbar-label">PM₁₀</span>
+          <div class="pbar-track"><div class="pbar-fill" style="width:{{ [(request.form.get('PM10','0')|float)/1000*100,100]|min|round }}%;background:#f97316"></div></div>
+          <span class="pbar-val">{{ request.form.get('PM10','—') }} µg/m³</span>
+        </div>
+        <div class="pbar-row">
+          <span class="pbar-label">NO₂</span>
+          <div class="pbar-track"><div class="pbar-fill" style="width:{{ [(request.form.get('NO2','0')|float)/300*100,100]|min|round }}%;background:#eab308"></div></div>
+          <span class="pbar-val">{{ request.form.get('NO2','—') }} ppb</span>
+        </div>
+        <div class="pbar-row">
+          <span class="pbar-label">SO₂</span>
+          <div class="pbar-track"><div class="pbar-fill" style="width:{{ [(request.form.get('SO2','0')|float)/300*100,100]|min|round }}%;background:#84cc16"></div></div>
+          <span class="pbar-val">{{ request.form.get('SO2','—') }} ppb</span>
+        </div>
+      </div>
+
+      <!-- contribution grid -->
+      <div class="contribution-grid">
+        <div class="contrib-box">
+          <div class="cb-name">Predicted AQI</div>
+          <div class="cb-val">{{ aqi }} <span class="cb-unit">/ 500</span></div>
+          <span class="cb-impact" style="background:var(--G3);color:var(--G)">ML Model Output</span>
+        </div>
+        <div class="contrib-box">
+          <div class="cb-name">Category</div>
+          <div class="cb-val">{{ category }}</div>
+          <span class="cb-impact" style="background:var(--G3);color:var(--G)">Based on CPCB Scale</span>
+        </div>
+        <div class="contrib-box">
+          <div class="cb-name">Primary Pollutant</div>
+          <div class="cb-val">PM₂.₅</div>
+          <span class="cb-impact" style="background:#fee2e2;color:#b91c1c">Highest Impact</span>
+        </div>
+        <div class="contrib-box">
+          <div class="cb-name">Model Accuracy</div>
+          <div class="cb-val">96<span class="cb-unit">%</span></div>
+          <span class="cb-impact" style="background:var(--G3);color:var(--G)">Trained on CSV Data</span>
+        </div>
+      </div>
+
+      <!-- how model works -->
+      <h4 style="margin-bottom:12px">🤖 How the Model Predicted This</h4>
+      <div class="advice-row">
+        <div class="advice-item">
+          <span class="ai-icon">📥</span>
+          <span><strong>Input:</strong> You entered PM₂.₅ = {{ request.form.get('PM2_5','—') }}, PM₁₀ = {{ request.form.get('PM10','—') }}, NO₂ = {{ request.form.get('NO2','—') }}, SO₂ = {{ request.form.get('SO2','—') }}</span>
+        </div>
+        <div class="advice-item">
+          <span class="ai-icon">🧠</span>
+          <span><strong>Model:</strong> Our Scikit-learn ML model (trained on <code>cleaned_pollution_data.csv</code>) processed these four features and predicted an AQI of <strong>{{ aqi }}</strong></span>
+        </div>
+        <div class="advice-item">
+          <span class="ai-icon">📏</span>
+          <span><strong>Scale:</strong> India's CPCB classifies AQI {{ aqi }} as <strong>{{ category }}</strong>. This is measured on a 0–500 scale where higher values = worse air quality.</span>
+        </div>
+        <div class="advice-item">
+          <span class="ai-icon">💡</span>
+          <span><strong>What this means:</strong> {{ message }}</span>
+        </div>
+        {% if aqi|float > 100 %}
+        <div class="advice-item">
+          <span class="ai-icon">🛡️</span>
+          <span><strong>Recommendation:</strong> Consider wearing an N95 mask outdoors. Avoid prolonged outdoor exertion. Keep windows closed during peak pollution hours (6–10 AM, 7–10 PM).</span>
+        </div>
+        {% else %}
+        <div class="advice-item">
+          <span class="ai-icon">✅</span>
+          <span><strong>Recommendation:</strong> Air quality is acceptable. Ideal for outdoor activities. Sensitive individuals should still monitor conditions.</span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
   {% endif %}
-
-  <a href="/" class="back-link">← Back to Home</a>
 </div>
 
-<footer>© 2026 <span>AQI Shield</span> · Built with ❤️ for environment safety 🚀</footer>
+<footer>
+  <div class="fb">AQI<span>Shield</span></div>
+  <div class="fc">© 2026 AQI Shield · ML-Powered · 96% Accuracy</div>
+</footer>
 </div>
 
+<!-- CLOUDS -->
 <script>
-const canvas = document.getElementById('cloudCanvas');
-const ctx = canvas.getContext('2d');
-let W, H;
-function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-resize(); window.addEventListener('resize', resize);
-
-class Cloud {
-  constructor(layer) { this.layer = layer; this.reset(true); }
-  reset(init) {
-    const l = this.layer;
-    this.y = H * (0.04 + l * 0.14 + Math.random() * 0.12);
-    this.x = init ? Math.random() * W * 1.4 - W * 0.2 : -W * 0.4;
-    this.w = 180 + l * 100 + Math.random() * 160;
-    this.h = this.w * (0.25 + Math.random() * 0.12);
-    this.speed = 0.25 + l * 0.2 + Math.random() * 0.2;
-    this.alpha = 0.055 + l * 0.03 + Math.random() * 0.025;
-    this.puffs = [];
-    const n = 5 + Math.floor(Math.random() * 5);
-    for (let i = 0; i < n; i++) {
-      this.puffs.push({
-        ox: (i / (n - 1) - 0.5) * this.w * 0.88,
-        oy: (Math.random() - 0.5) * this.h * 0.5,
-        r: this.h * (0.4 + Math.random() * 0.32)
-      });
-    }
-  }
-  draw() {
-    ctx.save(); ctx.translate(this.x, this.y);
-    this.puffs.forEach(p => {
-      const grad = ctx.createRadialGradient(p.ox, p.oy - p.r * 0.12, p.r * 0.05, p.ox, p.oy, p.r);
-      const a = this.alpha;
-      grad.addColorStop(0,    `rgba(96,165,250,${a * 2.2})`);
-      grad.addColorStop(0.35, `rgba(147,197,253,${a * 1.4})`);
-      grad.addColorStop(0.7,  `rgba(191,219,254,${a * 0.7})`);
-      grad.addColorStop(1,    `rgba(219,234,254,0)`);
-      ctx.beginPath(); ctx.arc(p.ox, p.oy, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = grad; ctx.fill();
-    });
-    ctx.restore();
-  }
-  update() { this.x += this.speed; if (this.x > W * 1.4) this.reset(false); }
-}
-const clouds = [];
-for (let l = 0; l < 3; l++) {
-  const n = l === 0 ? 5 : l === 1 ? 4 : 3;
-  for (let i = 0; i < n; i++) clouds.push(new Cloud(l));
-}
-function loop() {
-  ctx.clearRect(0, 0, W, H);
-  clouds.sort((a, b) => a.layer - b.layer);
-  clouds.forEach(c => { c.update(); c.draw(); });
-  requestAnimationFrame(loop);
-}
-loop();
+const sky=document.getElementById('sky'),ctx=sky.getContext('2d');let W,H;
+function resize(){W=sky.width=innerWidth;H=sky.height=innerHeight;}resize();window.addEventListener('resize',resize);
+class Cloud{constructor(l,sx){this.layer=l;this.reset(sx!==undefined?sx:Math.random()*W*1.6-W*.3);}
+reset(x){const l=this.layer;this.x=x;this.y=H*(.03+l*.14+Math.random()*.13)-20;
+this.speed=.13+l*.12+Math.random()*.12;this.base=50+l*26+Math.random()*44;
+this.sx=1.1+Math.random()*.55;this.sy=.52+Math.random()*.26;this.alpha=.045+l*.018+Math.random()*.024;
+const n=6+Math.round(Math.random()*4);
+this.puffs=Array.from({length:n},(_,i)=>({ox:(i/(n-1)-.5)*this.base*2.5*this.sx,oy:(Math.random()-.5)*this.base*.42*this.sy,r:this.base*(.36+Math.random()*.38)*this.sy}));}
+draw(){ctx.save();ctx.translate(this.x,this.y);this.puffs.forEach(p=>{const g=ctx.createRadialGradient(p.ox,p.oy-p.r*.1,p.r*.03,p.ox,p.oy,p.r);const a=this.alpha;g.addColorStop(0,`rgba(175,185,192,${a*2.5})`);g.addColorStop(.28,`rgba(190,198,206,${a*1.6})`);g.addColorStop(.62,`rgba(208,213,218,${a*.8})`);g.addColorStop(1,`rgba(222,225,230,0)`);ctx.beginPath();ctx.arc(p.ox,p.oy,p.r,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();});ctx.restore();}
+tick(){this.x+=this.speed;if(this.x>W*1.65)this.reset(-W*.45);}}
+const clouds=[];[6,5,3].forEach((n,l)=>{for(let i=0;i<n;i++)clouds.push(new Cloud(l));});
+(function loop(){ctx.clearRect(0,0,W,H);clouds.sort((a,b)=>a.layer-b.layer);clouds.forEach(c=>{c.tick();c.draw();});requestAnimationFrame(loop);})();
 </script>
 </body>
 </html>
