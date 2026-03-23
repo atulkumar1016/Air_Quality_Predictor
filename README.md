@@ -14,7 +14,7 @@
 
 ## ✅ Highlights
 
-- ✔️ ~99% prediction accuracy on AQI data
+- ✔️ ~96% prediction accuracy on AQI data
 - ✔️ Real-time AQI data for major Indian cities
 - ✔️ Complete end-to-end ML pipeline
 - ✔️ Clean, responsive Flask web interface
