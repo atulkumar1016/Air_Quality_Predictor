@@ -16,22 +16,22 @@ def get_category(aqi):
     aqi = round(float(aqi), 1)
     if aqi <= 50:
         return ("Good", "green",
-                "Hawa bilkul saaf hai! Outdoor activities ke liye perfect din hai.")
+                "Air quality is excellent. No restrictions on outdoor activities.")
     elif aqi <= 100:
         return ("Satisfactory", "yellow",
-                "Hawa theek hai. Sensitive logon ko thoda dhyan rakhna chahiye.")
+                "Air quality is acceptable. Unusually sensitive individuals may experience minor discomfort.")
     elif aqi <= 200:
         return ("Moderate", "orange",
-                "Sensitive groups — heart ya lung patients — bahar kam niklen.")
+                "Sensitive groups — heart or lung disease patients — should limit prolonged outdoor exertion.")
     elif aqi <= 300:
         return ("Poor", "red",
-                "Sabko breathing problem ho sakti hai. Mask pehnna recommended hai.")
+                "Everyone may begin to experience health effects. Wearing a mask outdoors is recommended.")
     elif aqi <= 400:
         return ("Very Poor", "purple",
-                "Bahut kharab hawa! Bahar nikalna avoid karo, windows band rakho.")
+                "Health alert — serious effects for everyone. Avoid outdoor activities and keep windows closed.")
     else:
         return ("Severe", "maroon",
-                "Emergency level pollution! Ghar se bilkul mat nikalna. N95 must.")
+                "Emergency conditions. Avoid all outdoor exposure. N95 mask is essential if you must go out.")
 
 @app.route('/')
 def home():
@@ -59,11 +59,12 @@ def predict():
                 aqi=aqi_val,
                 category=category,
                 color=color,
-                message=message
+                message=message,
+                aqi_high=(aqi_val > 100)
             )
         except Exception as e:
             return render_template('predict.html',
-                                   error=f"Sahi number daal bhai! ({str(e)})",
+                                   error=f"Invalid input. Please enter numeric values only. ({str(e)})",
                                    show=False)
     return render_template('predict.html', show=False)
 
