@@ -1,8 +1,16 @@
 # 🌍 AQI Shield — Air Quality Prediction
 
-**Tool:** Python, Flask, Machine Learning &nbsp;|&nbsp; **Type:** Web Application
+> AI-powered air quality prediction web app providing real-time AQI data and future forecasts for major Indian cities — built using Machine Learning and Flask.
 
-> 🌍 AQI Shield is an AI-powered air quality prediction web app that provides real-time AQI data and future forecasts for major Indian cities — built using Machine Learning and Flask with ~99% prediction accuracy and a clean, user-friendly interface. | Domain: Data Analysis
+---
+
+## 📊 Model Accuracy
+
+```
+Prediction Accuracy: 96%
+```
+
+> Trained on historical AQI data across major Indian cities with robust preprocessing and feature engineering.
 
 ---
 
@@ -14,7 +22,7 @@
 
 ## ✅ Highlights
 
-- ✔️ ~96% prediction accuracy on AQI data
+- ✔️ **96% prediction accuracy** on AQI data
 - ✔️ Real-time AQI data for major Indian cities
 - ✔️ Complete end-to-end ML pipeline
 - ✔️ Clean, responsive Flask web interface
@@ -26,7 +34,7 @@
 
 ### 🤖 AI-Powered Predictions
 - Machine Learning model trained on historical AQI data
-- Achieves ~99% prediction accuracy
+- Achieves **96% prediction accuracy**
 - Forecasts future AQI levels for informed decision-making
 
 ### 🏙️ Real-Time AQI Data
@@ -72,7 +80,6 @@ AQI_Shield/
 │   ├── raw_data.csv               # Original AQI dataset
 │   └── cleaned_data.csv           # Preprocessed dataset
 ├── 📄 requirements.txt            # Python dependencies
-│
 └── 📄 README.md                   # Project documentation
 ```
 
@@ -84,21 +91,28 @@ AQI_Shield/
 - Python 3.8 or later
 - Libraries: `flask`, `pandas`, `numpy`, `scikit-learn`, `matplotlib`
 
+### How to Run Locally
+
+1. **Clone** the repository
 ```bash
-pip install -r requirements.txt
+git clone https://github.com/your-username/AQI_Shield.git
+cd AQI_Shield
 ```
 
-### How to Run Locally
-1. **Clone** the repository
 2. **Install** dependencies
 ```bash
 pip install -r requirements.txt
 ```
+
 3. **Run** the Flask app
 ```bash
 python app.py
 ```
-4. **Open** `http://localhost:5000` in your browser
+
+4. **Open** your browser and go to:
+```
+http://localhost:5000
+```
 
 ---
 
@@ -110,16 +124,6 @@ python app.py
 - **Feature Engineering** — extracting meaningful inputs for the model
 - **Model Deployment** — hosting ML apps on Render cloud platform
 - **AQI Analysis** — understanding pollutant levels and health impact
-
----
-
-## 📷 App Preview
-
-> *(Add screenshots of the web interface here)*
-
-```
-[ App Screenshot Placeholder ]
-```
 
 ---
 
