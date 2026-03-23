@@ -68,10 +68,12 @@ nav{position:sticky;top:0;z-index:500;
   animation:up .8s cubic-bezier(.22,1,.36,1) both}
 .ldot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:lpulse 2.2s infinite}
 @keyframes lpulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
-.hero-h1{font-size:clamp(2.6rem,6vw,5rem);font-weight:800;line-height:1.06;
-  color:var(--ink);letter-spacing:-2px;margin-bottom:20px;
-  animation:up .9s cubic-bezier(.22,1,.36,1) .08s both}
-.hero-h1 .gr{color:var(--G)}
+.hero-h1{font-size:clamp(2rem,5.5vw,4.8rem);font-weight:800;line-height:1.1;
+  color:var(--ink);letter-spacing:-1.5px;margin-bottom:20px;
+  animation:up .9s cubic-bezier(.22,1,.36,1) .08s both;
+  display:flex;flex-direction:column;align-items:center;gap:0}
+.hero-h1 .gr{color:var(--G);white-space:nowrap}
+.hero-h1 .bk{white-space:nowrap}
 .hero-p{font-size:1.05rem;color:var(--muted);max-width:430px;
   line-height:1.85;margin-bottom:44px;
   animation:up .9s cubic-bezier(.22,1,.36,1) .18s both}
@@ -280,6 +282,7 @@ footer{background:var(--ink);padding:32px 60px;
   .nav-links{display:none}
   .ham{display:flex}
   .hero{padding:60px 16px 44px;min-height:auto}
+  .hero-h1{font-size:clamp(2rem,8vw,2.8rem);letter-spacing:-0.5px}
   .hero-aqi-card{grid-template-columns:1fr;padding:22px 18px;gap:18px}
   .hac-right{display:none}
   .hac-num{font-size:3.2rem}
@@ -339,7 +342,10 @@ footer{background:var(--ink);padding:32px 60px;
 <!-- HERO -->
 <section class="hero">
   <div class="pill"><span class="ldot"></span>Real-time Air Intelligence</div>
-  <h1 class="hero-h1">Know the air<br><span class="gr">before you breathe it</span></h1>
+  <h1 class="hero-h1">
+    <span class="bk">Know the air</span>
+    <span class="gr">before you breathe it</span>
+  </h1>
   <p class="hero-p">AI-powered AQI prediction across Indian cities — tracking PM₂.₅, PM₁₀, NO₂ &amp; SO₂ with 96% model accuracy.</p>
   <div class="hero-btns">
     <a href="/predict" class="btn-solid">Check AQI Now</a>
@@ -379,10 +385,6 @@ footer{background:var(--ink);padding:32px 60px;
   <div class="city-scroll-wrap">
     <div class="city-scroll-header">
       <span class="city-scroll-title">Live AQI — Major Indian Cities</span>
-      <span class="scroll-hint">
-        <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-        Scroll to explore
-      </span>
     </div>
     <div class="city-scroll" id="cityScroll"></div>
   </div>
@@ -624,10 +626,8 @@ function showCity(idx){
     document.getElementById(b.b).style.width=Math.min(b.val/b.max*100,100)+'%';
   });
 
-  /* highlight active card & scroll to it */
+  /* highlight active card only — no page scroll */
   document.querySelectorAll('.city-card').forEach((el,i)=>el.classList.toggle('active',i===idx));
-  const activeCard=document.getElementById('cc'+idx);
-  if(activeCard) activeCard.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
 }
 
 setTimeout(()=>showCity(0),500);
