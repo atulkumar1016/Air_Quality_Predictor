@@ -46,6 +46,16 @@ def predict():
             no2  = float(request.form['NO2'])
             so2  = float(request.form['SO2'])
 
+            # Validate ranges
+            if not (0 <= pm25 <= 500):
+                raise ValueError("PM2.5 must be between 0 and 500 µg/m³")
+            if not (0 <= pm10 <= 1000):
+                raise ValueError("PM10 must be between 0 and 1000 µg/m³")
+            if not (0 <= no2 <= 300):
+                raise ValueError("NO2 must be between 0 and 300 ppb")
+            if not (0 <= so2 <= 300):
+                raise ValueError("SO2 must be between 0 and 300 ppb")
+
             # Predict using ML model
             features = np.array([[pm25, pm10, no2, so2]])
             aqi_pred = model.predict(features)[0]
